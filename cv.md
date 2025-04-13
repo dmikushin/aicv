@@ -3,7 +3,7 @@
 ## PERSONAL INFORMATION
 
 - **Name**: Dmitry Mikushin
-- **Position**: HPC/Embedded Engineer
+- **Position**: HPC/Embedded Engineer, Architect or Team Lead
 - **Address**: 1815 Clarens, Switzerland
 - **Phone**: +41 78 925 90 90
 - **Email**: dmitry@kernelgen.org
@@ -24,15 +24,15 @@ As an active daily user of LLMs for code development, I leverage AI tools to enh
 
 ## KEY ACHIEVEMENTS
 
-- **GPU-Accelerated CFD**: Developed unstructured solver that achieved 15% performance improvement on a single NVIDIA H100 GPU compared to 384 CPU threads on 4× AMD EPYC 7763 CPUs for 50M+ element CFD simulations
-- **Memory Optimization**: Implemented reduced-memory multicolor Gauss-Seidel method using Fréchet derivative to achieve 45% memory reduction
-- **Cross-Platform Development**: Created portable OpenMP code working efficiently in both multicore and GPU offload scenarios
-- **Advanced Architecture Support**: Enabled GH200 support via porting code to ARM64 with Clang
+- **GPU-Accelerated Algorithms Design**: Designed and developed many GPU algorithms in various domains, ranging from economics, computer vision to radio astronomy
+- **Cross-Platform Development**: Ported many research and production softwares to any OS, architecture or platform
 - **Research Recognition**: Co-authored many research papers and industrial presentations in HPC and CV
 - **Entrepreneurship**: Co-founded Purple Gaze Inc. and developed company's first "Foxy" eyetracking device product
 
 
 ## CORE COMPETENCIES
+
+- **Technical Team Lead/CTO**: strong technical strategy visioner in long-term projects, team leader by example of technical excellence; leader of mixed human/AI team
 
 - **HPC/Engineering**: Fluency in full development & support cycle of HPC applications for Linux clusters: programming, parallelization for different architectures, debugging, profiling. Experienced in developing and bugfixing very large codebases, such as MSC Nastran, PyTorch, MIOpen, etc.
 
@@ -69,14 +69,10 @@ render('employment.json')
 - **Hardware**: Electronics prototyping, soldering, circuit checking, milling machine operation
 
 
-## EDUCATION
-
 ```pymd
 render('education.json')
 ```
 
-
-## PUBLICATIONS
 
 ```pymd
 render('publications.json')
