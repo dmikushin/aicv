@@ -193,7 +193,7 @@ def create_styled_html(content, personal_info, file_path):
     photo_data = ""
     photo_path = Path(file_path).parent / "photo.jpg"
     photo_html = '<div class="photo-placeholder">120 × 150</div>'
-    
+
     try:
         if photo_path.exists():
             with open(photo_path, "rb") as img_file:
@@ -415,6 +415,25 @@ def create_styled_html(content, personal_info, file_path):
             margin-bottom: 0.4rem; /* Match the spacing between other list items */
         }}
 
+        /* Style for the dates immediately below job header */
+        h2 + p em {{
+            display: block;
+            color: var(--primary-color); /* Same blue color as the headers */
+            font-size: 1.2rem; /* Larger font size */
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }}
+
+        /* Make sure the job title stands out more */
+        .job-header {{
+            font-weight: 500;
+        }}
+
+        /* Add more spacing before the responsibilities */
+        .resp-title {{
+            margin-top: 0.5rem;
+        }}
+
         /* Ensure consistent spacing for all list items */
         li {{
             margin-bottom: 0.4rem;
@@ -464,6 +483,29 @@ def create_styled_html(content, personal_info, file_path):
             margin-bottom: 0.4rem;
             font-style: italic;
             color: #666;
+            font-size: 0.95rem;
+        }}
+
+        .job-date-line {{
+            position: relative;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            border-top: 2px solid var(--primary-color);
+        }}
+
+        .job-date {{
+            position: relative;
+            top: -0.7em;
+            float: right;
+            background-color: #fff;
+            padding: 0 5px;
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }}
+
+        .publications-list li {{
+            margin-bottom: 0.75rem;
             font-size: 0.95rem;
         }}
 
@@ -833,9 +875,13 @@ def render_education(education):
     md = "## Education\n"
     for edu in education:
         md += f"## {edu['degree']}\n"
+
+        # Place dates right below the header, using the same format as employment dates
+        md += f"<p><em>{edu['dates']}</em></p>\n\n"
+
         md += f"- **Institution:** {edu['institution']}\n"
         md += f"- **Location:** {edu['location']}\n"
-        md += f"- **Dates:** {edu['dates']}\n"
+
         if "dissertation" in edu:
             md += f"- **Dissertation:** {edu['dissertation']}\n"
         if "focus_areas" in edu:
@@ -883,8 +929,13 @@ def render_employment(employment):
 
         # Add a special class to mark this as a job header (for avoiding duplicate emojis)
         md += f"## {position_emoji} <span class='job-header'>{job['position']} at {job['company']}</span>\n"
-        md += f"- **Location:** {job.get('location', 'N/A')}\n"
-        md += f"- **Dates:** {job['dates']}\n"
+
+        # Place dates right below the header
+        md += f"*{job['dates']}*\n\n"
+
+        # Add location if available
+        if 'location' in job and job['location']:
+            md += f"- **Location:** {job.get('location', 'N/A')}\n"
 
         # Add CSS class to control spacing for the responsibilities section
         md += f"- <span class='resp-title'>**Responsibilities:**</span>\n\n"
