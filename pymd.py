@@ -7,6 +7,8 @@ import io
 import sys
 import json
 import os
+import base64
+from pathlib import Path
 
 class PyMdExtension(Extension):
     """A custom Markdown extension to handle `pymd` blocks.
@@ -65,7 +67,7 @@ def process_markdown(file_path):
 
     # Check if the content contains job headers (from render_employment)
     # and process section emojis differently based on this
-    html_document = create_styled_html(html_content, personal_info)
+    html_document = create_styled_html(html_content, personal_info, file_path)
 
     return html_document
 
@@ -171,7 +173,7 @@ def extract_link_or_text(text):
         }
 
 
-def create_styled_html(content, personal_info):
+def create_styled_html(content, personal_info, file_path):
     """Creates a full HTML document with styling and structure"""
 
     # Split name into parts for PhD styling if applicable
@@ -186,6 +188,22 @@ def create_styled_html(content, personal_info):
         name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
 
     name_with_phd = f"{name},<br>PhD" if has_phd else name
+
+    # Look for photo.jpg in the same directory as the CV file
+    photo_data = ""
+    photo_path = Path(file_path).parent / "photo.jpg"
+    photo_html = '<div class="photo-placeholder">120 × 150</div>'
+    
+    try:
+        if photo_path.exists():
+            with open(photo_path, "rb") as img_file:
+                photo_bytes = img_file.read()
+                photo_base64 = base64.b64encode(photo_bytes).decode('utf-8')
+                photo_data = f"data:image/jpeg;base64,{photo_base64}"
+                photo_html = f'<img src="{photo_data}" alt="{name}" style="width: 100%; height: 100%; object-fit: cover;">'
+                print(f"Photo found and embedded: {photo_path}")
+    except Exception as e:
+        print(f"Error processing photo: {e}")
 
     # Build the document with styling
     html = f'''<!DOCTYPE html>
@@ -623,7 +641,7 @@ def create_styled_html(content, personal_info):
         <header class="cv-header">
             <div class="header-left">
                 <div class="photo-container">
-                    <div class="photo-placeholder">120 × 150</div>
+                    {photo_html}
                 </div>
                 <div class="name-position">
                     <h1>{name_with_phd}</h1>
@@ -696,56 +714,6 @@ def create_styled_html(content, personal_info):
     html += '''
         </div>
     </div>
-
-    <script>
-        // Function to handle photo upload
-        function setupPhotoUpload() {
-            const photoContainer = document.querySelector('.photo-container');
-
-            photoContainer.addEventListener('click', function() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-
-                input.onchange = function(e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            const img = photoContainer.querySelector('img') || document.createElement('img');
-                            img.src = event.target.result;
-                            img.style.width = '100%';
-                            img.style.height = '100%';
-                            img.style.objectFit = 'cover';
-
-                            if (!photoContainer.querySelector('img')) {
-                                photoContainer.innerHTML = '';
-                                photoContainer.appendChild(img);
-                            }
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                };
-
-                input.click();
-            });
-
-            // Add hover effect
-            photoContainer.addEventListener('mouseenter', function() {
-                this.style.cursor = 'pointer';
-                this.style.opacity = '0.9';
-            });
-
-            photoContainer.addEventListener('mouseleave', function() {
-                this.style.opacity = '1';
-            });
-        }
-
-        // Initialize photo upload functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            setupPhotoUpload();
-        });
-    </script>
 </body>
 </html>
 '''
