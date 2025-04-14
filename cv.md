@@ -1,9 +1,7 @@
-# CURRICULUM VITAE
-
 ## PERSONAL INFORMATION
 
 - **Name**: Dmitry Mikushin
-- **Position**: HPC/Embedded Engineer, Architect or Team Lead
+- **Position**: HPC/Embedded Engineer, Architect or Human/AI Team Lead
 - **Address**: 1815 Clarens, Switzerland
 - **Phone**: +41 78 925 90 90
 - **Email**: dmitry@kernelgen.org
@@ -24,27 +22,42 @@ As a regular user of AI-assisted development tools, I incorporate LLMs into my d
 
 ## KEY ACHIEVEMENTS
 
-- **GPU-Accelerated Algorithms Design**: Designed and developed many GPU algorithms in various domains, ranging from economics, computer vision to radio astronomy
-- **Cross-Platform Development**: Ported many research and production softwares to any OS, architecture or platform
-- **Research Recognition**: Co-authored many research papers and industrial presentations in HPC and CV
-- **Entrepreneurship**: Co-founded Purple Gaze Inc. and developed company's first "Foxy" eyetracking device product
+- **GPU-Accelerated Algorithms Design**: Created and implemented numerous high-performance GPU algorithms in many domains: CFD, economics, computer vision, homomorphic encryption, self-driving simulators, and even radio astronomy
+- **Cross-Platform Development**: Successfully ported multiple research and production software packages to diverse operating systems, architectures, and platforms
+- **Research Impact**: Co-authored significant research papers and industrial presentations in high-performance computing and computer vision
+- **Entrepreneurial Success**: Co-founded Purple Gaze Inc. and spearheaded development of the company's first "Foxy" eyetracking device
 
 
 ## CORE COMPETENCIES
 
-- **Technical Team Lead/CTO**: strong technical strategy visioner in long-term projects, team leader by example of technical excellence; leader of mixed human/AI team
+- **Technical Team Lead/CTO**: Proven ability to develop technical strategy for long-term projects, lead by example through technical excellence, and effectively direct mixed human/AI teams
 
-- **HPC/Engineering**: Fluency in full development & support cycle of HPC applications for Linux clusters: programming, parallelization for different architectures, debugging, profiling. Experienced in developing and bugfixing very large codebases, such as MSC Nastran, PyTorch, MIOpen, etc.
+- **HPC/Engineering**: Mastery of the complete development & support cycle for HPC applications on Linux clusters: programming, multi-architecture parallelization, debugging, and performance optimization. Experienced with large-scale codebases including MSC Nastran, PyTorch, and MIOpen.
 
-- **GPU Acceleration Expert**: Specialized in optimizing memory footprint for large-scale simulations, porting existing solvers to leverage NVIDIA H100/GH200 GPUs, and implementing specialized algorithms for optimal compute-memory balance.
+- **GPU Acceleration Expert**: Specialized in memory footprint optimization for large-scale simulations, legacy solver migration to NVIDIA H100/GH200 GPUs, and implementation of highly optimized algorithms for superior compute-memory balance.
 
-- **Research & Development**: Exploring new environments/software and teaching others to use them, designing & performing experiments to analyze hardware/software properties and generalizing findings into practically useful methods/tools.
+- **Research & Development**: Skilled at exploring new technologies and transferring that knowledge to others, designing comprehensive experiments to analyze hardware/software performance, and translating findings into practical methods and tools.
 
-- **AI-Enhanced Development**: Active daily practitioner of LLM-assisted coding workflows, leveraging AI tools (shell_gpt, VSCode Agent) to accelerate development, debug complex code, and solve technical challenges.
+- **AI-Enhanced Development**: Daily practitioner of LLM-assisted coding workflows, leveraging AI tools (shell_gpt, VSCode Agent) to streamline development, troubleshoot complex code, and overcome technical obstacles.
 
-- **Embedded SW/HW**: Developer of embedded machine vision SW/HW. Designed and implemented Linux firmware, realtime processing services for resource-limited ARM processors (eyetracking), realtime device-host communication.
+- **Embedded SW/HW**: Developer of specialized embedded machine vision systems. Designed and implemented Linux firmware and real-time processing services for resource-constrained ARM processors (eyetracking), with expertise in real-time device-host communication.
 
-- **Compilers Development**: Knowledge of compiler internal structures, contributions to LLVM. Designed and developed KernelGen - a prototype of auto-parallelizing Fortran/C compiler for NVIDIA GPUs.
+- **Compilers Development**: Deep understanding of compiler internals with contributions to LLVM. Creator of KernelGen - an innovative auto-parallelizing Fortran/C compiler for NVIDIA GPUs.
+
+
+## TECHNICAL SKILLS
+
+- **Programming Languages**: C/C++, CUDA/HIP/OpenCL, Fortran, Python, Perl, Bash; an active learner of Rust
+- **Development Tools**: CMake/make, git, gdb, vim, tmux
+- **AI Tools**: shell_gpt, ollama, gguf, VSCode agent
+- **High Performance Computing**: GPU acceleration, OpenMP (multicore and GPU offload), MPI, algorithm optimization
+- **GPU Expertise**: NVIDIA H100/GH200, Parallel Programming, Memory optimization, Performance tuning, Kepler/Volta assembler
+- **CFD & Numerical Methods**: Unstructured solvers, Gauss-Seidel methods, Fréchet derivatives, Memory reduction techniques
+- **Compiler Development**: LLVM contributions, Clang/LLVM plugins developer
+- **Embedded Systems**: UART, U-boot, WiringPi, ADBD, Allwinner, Rockchip, ATTiny85, Cypress FX3, uvc/genicam camera vision
+- **Cloud Technologies**: Docker, Singularity, ssh
+- **Operating Systems**: Linux, FreeBSD
+- **Hardware**: Electronics prototyping, soldering, circuit checking, milling machine operation
 
 
 ## PROFESSIONAL EXPERIENCE
@@ -52,22 +65,6 @@ As a regular user of AI-assisted development tools, I incorporate LLMs into my d
 ```pymd
 render('employment.json')
 ```
-
-
-## TECHNICAL SKILLS
-
-- **Programming Languages**: C/C++, CUDA/HIP/OpenCL, Fortran, Python, Perl, Bash
-- **Development Tools**: CMake/make, git, gdb, vim, tmux
-- **AI Tools**: shell_gpt, ollama, gguf, VSCode agent
-- **High Performance Computing**: GPU acceleration, OpenMP (multicore and GPU offload), MPI, algorithm optimization
-- **GPU Expertise**: NVIDIA H100/GH200, Parallel Programming, Memory optimization, Performance tuning, Kepler/Volta assembler
-- **CFD & Numerical Methods**: Unstructured solvers, Gauss-Seidel methods, Fréchet derivatives, Memory reduction techniques
-- **Compiler Development**: LLVM contributions, KernelGen (auto-parallelizing Fortran/C compiler for NVIDIA GPUs)
-- **Embedded Systems**: UART, U-boot, WiringPi, ADBD, Allwinner, Rockchip, ATTiny85, Cypress FX3, uvc/genicam camera vision
-- **Cloud Technologies**: Docker, ssh
-- **Operating Systems**: Linux, FreeBSD
-- **Hardware**: Electronics prototyping, soldering, circuit checking, milling machine operation
-
 
 ```pymd
 render('education.json')
@@ -77,4 +74,3 @@ render('education.json')
 ```pymd
 render('publications.json')
 ```
-

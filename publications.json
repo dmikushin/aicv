@@ -28,21 +28,13 @@
     {
       "type": "inproceedings",
       "citation_key": "mikushin2010implementation",
-      "title": "The implementation of regional atmospheric model numerical algorithms for CBEA-based clusters",
+      "title": "The implementation of regional atmospheric model numerical algorithms for Cell Broadband Engine Architecture-based clusters",
       "author": ["Mikushin, Dmitry", "Stepanenko, Victor"],
       "booktitle": "Parallel Processing and Applied Mathematics: 8th International Conference, PPAM 2009, Wroclaw, Poland, September 13-16, 2009. Revised Selected Papers, Part I 8",
       "pages": "525--534",
       "year": 2010,
       "organization": "Springer Berlin Heidelberg",
       "citations": 1
-    },
-    {
-      "type": "article",
-      "citation_key": "mikushin2010parallel",
-      "title": "Parallel finite difference solvers framework for Cell Broadband Engine",
-      "author": ["Mikushin, Dmitry", "Adinetz, Andy"],
-      "year": 2010,
-      "citations": 0
     },
     {
       "type": "article",

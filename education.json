@@ -7,6 +7,7 @@
       "dates": "May 2019 - February 2023",
       "dissertation": "High-performance computing approaches to solve large-scale dynamic models in economics and finance",
       "focus_areas": [
+        "Dynamic programming",
         "Compilers",
         "C++",
         "Combinatorics",
