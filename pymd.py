@@ -246,8 +246,36 @@ def create_styled_html(content, personal_info):
         }}
 
         .header-left {{
+            display: flex;
+            align-items: flex-start;
             flex: 1;
-            margin-right: 2rem;
+        }}
+
+        .photo-container {{
+            width: 120px;
+            height: 150px;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+        }}
+
+        .photo-container img {{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }}
+
+        .photo-placeholder {{
+            color: #999;
+            font-size: 0.8rem;
+            text-align: center;
+        }}
+
+        .name-position {{
+            flex: 1;
         }}
 
         .header-right {{
@@ -257,7 +285,6 @@ def create_styled_html(content, personal_info):
         }}
 
         .contact-info {{
-            margin-right: 1.5rem;
             font-size: 0.9rem;
             line-height: 1.3;
             text-align: right;
@@ -289,28 +316,6 @@ def create_styled_html(content, personal_info):
 
         h1 .mono-emoji, h2 .mono-emoji {{
             opacity: 0.7;
-        }}
-
-        .photo-container {{
-            width: 120px;
-            height: 150px;
-            border: 1px solid var(--border-color);
-            background-color: var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }}
-
-        .photo-container img {{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }}
-
-        .photo-placeholder {{
-            color: #999;
-            font-size: 0.8rem;
-            text-align: center;
         }}
 
         h1 {{
@@ -574,6 +579,17 @@ def create_styled_html(content, personal_info):
                 align-self: center;
                 margin-right: 0;
                 margin-bottom: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }}
+
+            .photo-container {{
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }}
+
+            .name-position {{
+                text-align: center;
             }}
 
             .header-right {{
@@ -596,10 +612,6 @@ def create_styled_html(content, personal_info):
                 text-align: center;
             }}
 
-            .photo-container {{
-                margin: 0;
-            }}
-
             .skills {{
                 grid-template-columns: 1fr;
             }}
@@ -610,8 +622,13 @@ def create_styled_html(content, personal_info):
     <div class="container">
         <header class="cv-header">
             <div class="header-left">
-                <h1>{name_with_phd}</h1>
-                <div class="position">{personal_info['position']}</div>
+                <div class="photo-container">
+                    <div class="photo-placeholder">120 × 150</div>
+                </div>
+                <div class="name-position">
+                    <h1>{name_with_phd}</h1>
+                    <div class="position">{personal_info['position']}</div>
+                </div>
             </div>
             <div class="header-right">
                 <div class="contact-info">
@@ -665,9 +682,6 @@ def create_styled_html(content, personal_info):
         html += f'                    <p><span class="mono-emoji">🎂</span> {personal_info["date_of_birth"]}</p>\n'
 
     html += '''                </div>
-                <div class="photo-container">
-                    <div class="photo-placeholder">120 × 150</div>
-                </div>
             </div>
         </header>
 
