@@ -60,7 +60,8 @@ def process_markdown(file_path):
     # Extract personal information from the markdown text
     personal_info = extract_personal_info(text)
 
-    # Create full HTML document with styling
+    # Check if the content contains job headers (from render_employment)
+    # and process section emojis differently based on this
     html_document = create_styled_html(html_content, personal_info)
 
     return html_document
@@ -639,7 +640,7 @@ def create_styled_html(content, personal_info):
 
 
 def add_section_emojis(content):
-    """Add appropriate emojis to section headers based on their content"""
+    """Add appropriate emojis to section headers based on their content, but skip job headers"""
 
     # Define a mapping of section keywords to emojis
     section_emojis = {
@@ -674,16 +675,46 @@ def add_section_emojis(content):
                 return emoji
         return '📄'  # Default emoji if no match
 
-    # Replace h1 and h2 tags with ones containing emojis
+    # First, we'll process the custom job headers and remove the special class
+    # but keep their existing emoji structure
+    content = re.sub(
+        r'<h2>(.*?)<span class=\'job-header\'>(.*?)</span>(.*?)</h2>',
+        r'<h2>\1\2\3</h2>',
+        content
+    )
+
+    # For all h1 tags and h2 tags that aren't job headers (don't contain the job-header class)
+    # We need two separate regex patterns to avoid overwriting job headers
+    
+    # Replace h1 tags with ones containing emojis
     content = re.sub(
         r'<h1>(.*?)</h1>',
         lambda m: f'<h1><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h1>',
         content
     )
-
+    
+    # Replace h2 tags but only those that don't already have emojis
+    # First, capture h2 tags that already have emojis (contain emoji unicode characters)
+    emoji_pattern = re.compile(r'<h2>([^<]*?[\U0001F000-\U0001FFFF][^<]*?)</h2>')
+    emoji_h2_tags = emoji_pattern.findall(content)
+    
+    # Create a safe pattern that doesn't match h2 tags that already have emojis
+    # We'll replace only those h2 tags that don't have emojis yet
+    for tag in emoji_h2_tags:
+        # Replace with a temporary marker
+        content = content.replace(f'<h2>{tag}</h2>', f'<h2_EMOJI_ALREADY_PRESENT>{tag}</h2_EMOJI_ALREADY_PRESENT>')
+    
+    # Now add emojis to remaining h2 tags
     content = re.sub(
         r'<h2>(.*?)</h2>',
         lambda m: f'<h2><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h2>',
+        content
+    )
+    
+    # Restore the temporarily marked tags
+    content = re.sub(
+        r'<h2_EMOJI_ALREADY_PRESENT>(.*?)</h2_EMOJI_ALREADY_PRESENT>',
+        r'<h2>\1</h2>',
         content
     )
 
@@ -758,7 +789,8 @@ def render_employment(employment):
                 position_emoji = emoji
                 break
 
-        md += f"## {position_emoji} {job['position']} at {job['company']}\n"
+        # Add a special class to mark this as a job header (for avoiding duplicate emojis)
+        md += f"## {position_emoji} <span class='job-header'>{job['position']} at {job['company']}</span>\n"
         md += f"- **Location:** {job.get('location', 'N/A')}\n"
         md += f"- **Dates:** {job['dates']}\n"
         md += "- **Responsibilities:**\n"
