@@ -1,5 +1,3 @@
-## PERSONAL INFORMATION
-
 - **Name**: Dmitry Mikushin
 - **Position**: HPC/Embedded Engineer, Architect or Human/AI Team Lead
 - **Address**: 1815 Clarens, Switzerland
@@ -7,8 +5,7 @@
 - **Email**: dmitry@kernelgen.org
 - **Website**: https://mikush.in
 - **Date of Birth**: 3 May 1986
-
-**Currently seeking a full-time remote position in Switzerland** (work permit already in place)
+- **Work authorization in Switzerland**: work permit B already in place
 
 
 ## PROFESSIONAL SUMMARY
