@@ -839,10 +839,31 @@ def render_employment(employment):
 def render_publications(publications):
     """
     Custom rendering of publications data with our styling and emojis.
-    Publications are sorted by citation count in descending order.
+    Publications with "to appear" status are displayed first, then sorted by citation count.
     """
-    # Sort publications by the number of citations in descending order
-    sorted_publications = sorted(publications, key=lambda pub: pub.get('citations', 0), reverse=True)
+    # First identify "to appear" publications
+    to_appear_publications = []
+    regular_publications = []
+
+    for pub in publications:
+        # Check if it's a "to appear" publication (either in the note field or in the title/abstract)
+        is_to_appear = False
+        if 'note' in pub and pub.get('note') and 'to appear' in pub.get('note', '').lower():
+            is_to_appear = True
+
+        if is_to_appear:
+            to_appear_publications.append(pub)
+        else:
+            regular_publications.append(pub)
+
+    # Sort regular publications by citation count in descending order
+    sorted_regular_publications = sorted(regular_publications, key=lambda pub: pub.get('citations', 0), reverse=True)
+
+    # Sort "to appear" publications by year (most recent first)
+    sorted_to_appear_publications = sorted(to_appear_publications, key=lambda pub: pub.get('year', 0), reverse=True)
+
+    # Combine the two lists: "to appear" publications first, then regular publications
+    sorted_publications = sorted_to_appear_publications + sorted_regular_publications
 
     md = "## Publications (peer-reviewed)\n\n"
 
@@ -850,16 +871,21 @@ def render_publications(publications):
     for pub in sorted_publications:
         pub_type = pub.get('type', 'article')
 
-        # Select emoji based on citation count
-        citation_count = pub.get('citations', 0)
-        if citation_count > 30:
-            citation_emoji = "🌟"
-        elif citation_count > 15:
-            citation_emoji = "⭐"
-        elif citation_count > 5:
-            citation_emoji = "📊"
+        # Select emoji based on status and citation count
+        is_to_appear = 'note' in pub and pub.get('note') and 'to appear' in pub.get('note', '').lower()
+
+        if is_to_appear:
+            citation_emoji = "🔥"  # Fire emoji for upcoming/to appear publications
         else:
-            citation_emoji = "📄"
+            citation_count = pub.get('citations', 0)
+            if citation_count > 30:
+                citation_emoji = "🌟"
+            elif citation_count > 15:
+                citation_emoji = "⭐"
+            elif citation_count > 5:
+                citation_emoji = "📊"
+            else:
+                citation_emoji = "📄"
 
         # Format authors in a consistent way: "Last1, F., Last2, F., & Last3, F."
         authors = []
@@ -950,8 +976,8 @@ def render_publications(publications):
             else:
                 citation += "."
 
-        # Add citation count if available
-        if 'citations' in pub and pub['citations'] > 0:
+        # Add citation count if available and it's not a "to appear" publication
+        if not is_to_appear and 'citations' in pub and pub['citations'] > 0:
             citation += f" (Cited {pub['citations']} times)"
 
         md += f"- {citation}\n"
