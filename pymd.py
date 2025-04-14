@@ -367,6 +367,16 @@ def create_styled_html(content, personal_info):
             position: relative;
         }}
 
+        .resp-title {{
+            display: block;
+            margin-bottom: 0.4rem; /* Match the spacing between other list items */
+        }}
+
+        /* Ensure consistent spacing for all list items */
+        li {{
+            margin-bottom: 0.4rem;
+        }}
+
         .timeline {{
             position: relative;
             padding-left: 0;
@@ -815,9 +825,13 @@ def render_employment(employment):
         md += f"## {position_emoji} <span class='job-header'>{job['position']} at {job['company']}</span>\n"
         md += f"- **Location:** {job.get('location', 'N/A')}\n"
         md += f"- **Dates:** {job['dates']}\n"
-        md += "- **Responsibilities:**\n"
+
+        # Add CSS class to control spacing for the responsibilities section
+        md += f"- <span class='resp-title'>**Responsibilities:**</span>\n\n"
+
+        # Use proper nesting for responsibilities with 2 spaces indentation
         for responsibility in job['responsibilities']:
-            md += f"  - {responsibility}\n"
+            md += f"    - {responsibility}\n"
         md += "\n"
     return md
 
