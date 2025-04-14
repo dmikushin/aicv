@@ -127,11 +127,11 @@ def extract_personal_info(markdown_text):
 
     email_match = re.search(r'\*\*Email\*\*:\s*(.*)', markdown_text)
     if email_match:
-        personal_info['email'] = email_match.group(1).strip()
+        personal_info['email'] = extract_link_or_text(email_match.group(1).strip())
 
     website_match = re.search(r'\*\*Website\*\*:\s*(.*)', markdown_text)
     if website_match:
-        personal_info['website'] = website_match.group(1).strip().replace('https://', '')
+        personal_info['website'] = extract_link_or_text(website_match.group(1).strip())
 
     dob_match = re.search(r'\*\*Date of Birth\*\*:\s*(.*)', markdown_text)
     if dob_match:
@@ -140,7 +140,7 @@ def extract_personal_info(markdown_text):
     # GitHub might be in a different section, but we'll try to extract it here
     github_match = re.search(r'\*\*GitHub\*\*:\s*(.*)', markdown_text)
     if github_match:
-        personal_info['github'] = github_match.group(1).strip()
+        personal_info['github'] = extract_link_or_text(github_match.group(1).strip())
     else:
         # Some people put this in the website section with GitHub: username, etc.
         if website_match and "github" in website_match.group(1).lower():
@@ -149,6 +149,26 @@ def extract_personal_info(markdown_text):
                 personal_info['github'] = github_username.group(1)
 
     return personal_info
+
+
+def extract_link_or_text(text):
+    """Extract URL and text from markdown link format [text](url) or just return the text"""
+    # Check if the text is in markdown link format: [text](url)
+    link_pattern = r'\[(.*?)\]\((.*?)\)'
+    match = re.search(link_pattern, text)
+
+    if match:
+        link_text = match.group(1)
+        link_url = match.group(2)
+        return {
+            'text': link_text,
+            'url': link_url
+        }
+    else:
+        return {
+            'text': text,
+            'url': text  # Just use the text as URL if no explicit markdown link
+        }
 
 
 def create_styled_html(content, personal_info):
@@ -496,6 +516,18 @@ def create_styled_html(content, personal_info):
             text-transform: none;
         }}
 
+        /* Add styling for links */
+        a {{
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }}
+
+        a:hover {{
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }}
+
         @media print {{
             .mono-emoji {{
                 display: none;
@@ -585,13 +617,48 @@ def create_styled_html(content, personal_info):
                 <div class="contact-info">
                     <p><span class="mono-emoji">📍</span> {personal_info['address']}</p>
                     <p><span class="mono-emoji">📞</span> {personal_info['phone']}</p>
-                    <p><span class="mono-emoji">✉️</span> {personal_info['email']}</p>
-                    <p><span class="mono-emoji">🌐</span> {personal_info['website']}</p>
 '''
+
+    # Add email with link
+    if isinstance(personal_info['email'], dict):
+        email_text = personal_info['email']['text']
+        email_url = personal_info['email']['url']
+        # If it's just an email without a formal protocol, add mailto:
+        if '@' in email_url and not email_url.startswith('mailto:') and not email_url.startswith('http'):
+            email_url = f"mailto:{email_url}"
+        html += f'                    <p><span class="mono-emoji">✉️</span> <a href="{email_url}">{email_text}</a></p>\n'
+    else:
+        # Fallback for backward compatibility
+        html += f'                    <p><span class="mono-emoji">✉️</span> <a href="mailto:{personal_info["email"]}">{personal_info["email"]}</a></p>\n'
+
+    # Add website with link
+    if isinstance(personal_info['website'], dict):
+        website_text = personal_info['website']['text'].replace('https://', '')
+        website_url = personal_info['website']['url']
+        # Ensure URL has protocol
+        if not website_url.startswith('http'):
+            website_url = f"https://{website_url}"
+        html += f'                    <p><span class="mono-emoji">🌐</span> <a href="{website_url}" target="_blank">{website_text}</a></p>\n'
+    else:
+        # Fallback for backward compatibility
+        website = personal_info['website'].replace('https://', '')
+        html += f'                    <p><span class="mono-emoji">🌐</span> <a href="https://{website}" target="_blank">{website}</a></p>\n'
 
     # Add GitHub info if available
     if personal_info['github']:
-        html += f'                    <p><span class="mono-emoji">💻</span> GitHub: {personal_info["github"]}</p>\n'
+        if isinstance(personal_info['github'], dict):
+            github_text = personal_info['github']['text']
+            github_url = personal_info['github']['url']
+            if not github_url.startswith('http'):
+                # Assume it's a username if not a full URL
+                if '/' not in github_url and not github_url.startswith('@'):
+                    github_url = f"https://github.com/{github_url}"
+                elif not github_url.startswith('https://'):
+                    github_url = f"https://github.com/{github_url}"
+            html += f'                    <p><span class="mono-emoji">💻</span> GitHub: <a href="{github_url}" target="_blank">{github_text}</a></p>\n'
+        else:
+            # Fallback for backward compatibility
+            html += f'                    <p><span class="mono-emoji">💻</span> GitHub: <a href="https://github.com/{personal_info["github"]}" target="_blank">{personal_info["github"]}</a></p>\n'
 
     # Add date of birth if available
     if personal_info['date_of_birth']:
@@ -607,7 +674,8 @@ def create_styled_html(content, personal_info):
         <div id="main-content">
 '''
 
-    # Process the content to add section emojis
+    # Process the content to add section emojis and convert markdown links
+    content = convert_markdown_links(content)
     content = add_section_emojis(content)
     html += content
 
@@ -669,6 +737,16 @@ def create_styled_html(content, personal_info):
 '''
 
     return html
+
+
+def convert_markdown_links(html_content):
+    """Convert markdown style links [text](url) to HTML links in the content"""
+    # Regular expression to find markdown links
+    # This pattern looks for [text](url) patterns but avoids matching within HTML tags
+    pattern = r'(?<![<"\'])(\[([^\]]+)\]\(([^)]+)\))(?![>"\'])'
+
+    # Replace markdown links with HTML links
+    return re.sub(pattern, r'<a href="\3" target="_blank">\2</a>', html_content)
 
 
 def add_section_emojis(content):
