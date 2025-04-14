@@ -10,7 +10,13 @@
 
 ## PROFESSIONAL SUMMARY
 
-I work at the intersection of research and industrial programming (C/C++, Fortran, Python), where classical supercomputing (MPI, OpenMP) meets modern hardware (GPUs, TPUs, embedded ASICs) and performance optimization. As co-founder of Purple Gaze Inc., I've developed eyetracking systems that are both more affordable and faster than many existing solutions. My expertise in CUDA, OpenCL, OpenACC, and Machine Learning has established me as an effective consultant in these fields. My academic work culminated in earning a PhD from the University of Lausanne, where I developed specialized supercomputing software for economics and finance applications.
+I work at the intersection of research and industrial programming (C/C++, Fortran, Python), where classical supercomputing (MPI, OpenMP) meets modern hardware (GPUs, TPUs, embedded ASICs) and performance optimization.
+
+As co-founder of Purple Gaze Inc., I've developed eyetracking systems that are both more affordable and faster than many existing solutions.
+
+My academic work culminated in earning a PhD from the University of Lausanne, where I developed specialized supercomputing software for economics and finance applications.
+
+My expertise in CUDA, OpenCL, OpenACC, and Machine Learning has established me as an effective consultant in these fields.
 
 I provide effective GPU-accelerated solutions to organizations facing complex computational challenges. My skills help teams successfully port legacy algorithms to utilize NVIDIA H100/GH200 GPU architectures, implement memory-optimized algorithms for better compute-memory balance, and develop portable cross-platform solutions that work reliably across different computing environments.
 

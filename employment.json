@@ -50,6 +50,7 @@
     {
       "position": "CUDA/C++ Developer",
       "company": "Valeo",
+      "location": "Remote",
       "dates": "2018 - 2019",
       "responsibilities": [
         "Designed and implemented efficient GPU kernels for self-driving car lidar simulation (ADAS)",
@@ -60,6 +61,7 @@
     {
       "position": "CUDA/C++ Developer",
       "company": "Excellian",
+      "location": "Remote",
       "dates": "2017 - 2018",
       "responsibilities": [
         "Implemented GPGPU for high-performance Monte-Carlo backpricing valuation for financial customers",
