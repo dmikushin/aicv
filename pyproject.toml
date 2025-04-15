@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit_core>=3.2"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "aicv"
+version = "0.1.0"
+description = "A Python package for generating CVs from Markdown and JSON data."
+authors = [
+    { name = "Dmitry Mikushin", email = "dmitry@kernelgen.org" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[project.scripts]
+aicv = "aicv.main:main"
