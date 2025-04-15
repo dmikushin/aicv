@@ -4,11 +4,18 @@ HTML generation utilities for the AI-aware CV generator
 import os
 import re
 
-def create_html_file(html_content, output_path):
-    """Writes HTML content to a file"""
+def create_html_file(html_content, output_path, silent=False):
+    """Writes HTML content to a file
+
+    Args:
+        html_content (str): The HTML content to write
+        output_path (str): The path to write the HTML file to
+        silent (bool, optional): If True, don't print message about file creation. Defaults to False.
+    """
     with open(output_path, 'w') as f:
         f.write(html_content)
-    print(f"CV saved to {output_path}")
+    if not silent:
+        print(f"CV saved to {output_path}")
 
 def create_styled_html(content, personal_info, photo_html):
     """Creates a full HTML document with styling and structure"""
@@ -414,13 +421,22 @@ def create_styled_html(content, personal_info, photo_html):
             text-decoration: underline;
         }}
 
+        /* PDF-specific styles */
+        @page {{
+            size: A4 portrait;
+            margin: 20mm 15mm 20mm 15mm;
+        }}
+
         @media print {{
             .mono-emoji {{
-                display: none;
+                /* For PDF output, we'll keep emojis visible but make them grayscale */
+                filter: grayscale(100%);
             }}
 
             h2 {{
                 padding-left: 0;
+                /* Ensure page breaks don't occur right after section headings */
+                page-break-after: avoid;
             }}
 
             body {{
@@ -432,7 +448,7 @@ def create_styled_html(content, personal_info, photo_html):
             .container {{
                 max-width: 100%;
                 margin: 0;
-                padding: 2cm 0.5cm 0.5cm;
+                padding: 0;
                 box-shadow: none;
             }}
 
@@ -448,6 +464,21 @@ def create_styled_html(content, personal_info, photo_html):
             h2 {{
                 color: black;
                 border-bottom-color: black;
+            }}
+
+            /* Avoid orphaned list items */
+            li {{
+                page-break-inside: avoid;
+            }}
+
+            /* Prevent page breaks inside job entries */
+            h2 + p + ul {{
+                page-break-inside: avoid;
+            }}
+
+            /* Ensure contact info doesn't split across pages */
+            .contact-info {{
+                page-break-inside: avoid;
             }}
         }}
 

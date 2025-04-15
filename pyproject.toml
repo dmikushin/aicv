@@ -17,6 +17,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
+dependencies = [
+    "markdown>=3.3.0",
+    "weasyprint>=52.5"
+]
+
+[project.optional-dependencies]
+pdf = ["weasyprint>=52.5"]
 
 [project.scripts]
 aicv = "aicv.main:main"
