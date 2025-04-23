@@ -142,6 +142,23 @@ def render_publications(publications):
             else:
                 citation += "."
 
+        elif pub_type == "poster":
+            # Format for poster presentations: Author(s). (Year). Title. Poster presented at Conference, Pages.
+            citation = f"{citation_emoji} {authors_text} ({pub['year']}). {pub['title']}. "
+
+            if 'booktitle' in pub:
+                citation += f"Poster presented at *{pub['booktitle']}*"
+
+                if 'pages' in pub and pub['pages']:
+                    citation += f", p. {pub['pages']}"
+
+                citation += "."
+
+                if 'note' in pub and pub['note']:
+                    citation += f" {pub['note']}."
+            else:
+                citation += "."
+
         # Add citation count if available and it's not a "to appear" publication
         if not is_to_appear and 'citations' in pub and pub['citations'] > 0:
             citation += f" (Cited {pub['citations']} times)"

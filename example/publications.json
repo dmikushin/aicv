@@ -122,6 +122,16 @@
       "year": 2017,
       "organization": "IEEE",
       "citations": 31
+    },
+    {
+      "type": "poster",
+      "citation_key": "ecem2019",
+      "title" : "On coupling of EyeStalker algorithm with USB3.0 camera for affordable eye tracking",
+      "author" : ["Mikushin, Dmitry", "Korotaev, Kirill", "MacInnes, William Joseph"],
+      "booktitle": "20th European Conference on Eye Movements",
+      "pages": "392",
+      "year": 2019,
+      "citations": 0
     }
   ]
 }
