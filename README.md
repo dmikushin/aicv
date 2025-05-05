@@ -16,7 +16,17 @@ Get your AI-managed CV!
 aicv example/cv.md
 ```
 
-## PDF Export
+## Format Options
+
+### HTML Generation (Default)
+
+By default, `aicv` generates an HTML version of your CV:
+
+```
+aicv example/cv.md
+```
+
+### PDF Export
 
 You can generate a PDF version of your CV with proper A4 paper size and page numbering:
 
@@ -26,7 +36,7 @@ aicv example/cv.md --pdf
 
 This will create only the PDF version of your CV (no HTML file will be generated).
 
-### PDF Options
+#### PDF Options
 
 - `--pdf`: Generate only a PDF version of your CV (no HTML file)
 - `--pdf-output PATH`: Specify a custom output path for the PDF file
@@ -38,6 +48,16 @@ Example with custom PDF path:
 ```
 aicv example/cv.md --pdf --pdf-output my_professional_cv.pdf
 ```
+
+### Markdown Export
+
+You can generate a clean, intermediate Markdown representation of your CV that can be easily parsed by LLMs for further processing:
+
+```
+aicv example/cv.md --markdown processed_cv.md
+```
+
+This will generate only the Markdown representation with all pymd blocks executed and skip any HTML/PDF generation.
 
 ### Installing PDF Support
 

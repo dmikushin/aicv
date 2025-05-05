@@ -7,7 +7,8 @@ Main entry point for the CV generation tool
 import argparse
 import os
 import tempfile
-from aicv.core.processor import process_markdown
+from aicv.core.processor import generate_markdown, process_markdown_to_html, get_photo_html
+from aicv.utils.text_processing import extract_personal_info
 from aicv.utils.html_generator import create_html_file
 
 def main():
@@ -19,12 +20,31 @@ def main():
     parser.add_argument('--pdf-output', type=str, help='Output PDF file path (default: input_file.pdf)')
     parser.add_argument('--paper', type=str, default='A4', help='PDF paper size (default: A4)')
     parser.add_argument('--no-page-numbers', action='store_true', help='Disable page numbers in PDF output')
+    parser.add_argument('--markdown', type=str, help='Output intermediate Markdown file and exit')
     args = parser.parse_args()
 
-    # Process the markdown file
-    html_content = process_markdown(args.file_path)
+    # First stage of pipeline: Generate the intermediate markdown representation
+    markdown_content = generate_markdown(args.file_path)
+    
+    # If markdown output is requested, save it and exit
+    if args.markdown:
+        # Write to the specified file
+        with open(args.markdown, 'w') as f:
+            f.write(markdown_content)
+        
+        print(f"Markdown representation saved to {args.markdown}")
+        return  # Exit early, don't generate HTML/PDF
 
-    # Determine if we should generate HTML, PDF, or both
+    # Extract personal information for the photo
+    personal_info = extract_personal_info(markdown_content)
+    
+    # Get the photo HTML
+    photo_html = get_photo_html(args.file_path, personal_info['name'])
+    
+    # Second stage of pipeline: Convert markdown to HTML
+    html_content = process_markdown_to_html(markdown_content, photo_html)
+
+    # Determine if we should generate HTML or PDF
     if args.pdf:
         try:
             from aicv.utils.pdf_converter import convert_html_to_pdf
