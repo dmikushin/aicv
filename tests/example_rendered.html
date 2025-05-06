@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dmitry Mikushin - CV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3465a4;
+            --secondary-color: #4e9a06;
+            --text-color: #333;
+            --secondary-text: #555;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+            --section-spacing: 2rem;
+            --timeline-color: var(--primary-color);
+            --font-primary: 'EB Garamond', Georgia, 'Times New Roman', Times, serif;
+            --line-height: 1.4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-rendering: optimizeLegibility;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-weight: 400;
+            line-height: var(--line-height);
+            color: var(--text-color);
+            background-color: #fff;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem 2rem;
+            background-color: #fff;
+        }
+
+        .cv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            border-bottom: none;
+            padding-bottom: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .photo-container {
+            width: 120px;
+            height: 150px;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder {
+            color: #999;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .name-position {
+            flex: 1;
+        }
+
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+
+        .contact-info {
+            font-size: 0.9rem;
+            line-height: 1.3;
+            text-align: right;
+        }
+
+        .contact-info p {
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .mono-emoji {
+            opacity: 0.7;
+            font-size: 1rem;
+            margin-right: 0.3rem;
+            filter: grayscale(100%);
+            display: inline-block;
+            vertical-align: text-bottom;
+        }
+
+        .contact-info .mono-emoji {
+            display: inline-block;
+            width: 1.2rem;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+
+        h1 .mono-emoji, h2 .mono-emoji {
+            opacity: 0.7;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+            color: var(--text-color);
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+
+        .position {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            color: var(--text-color);
+        }
+
+        .status-note {
+            display: inline-block;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            padding: 0.3rem 0.5rem;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 400;
+        }
+
+        #main-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .core-competency {
+            margin-bottom: 1rem;
+        }
+
+        .core-competency strong {
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 0.2rem;
+            font-weight: 500;
+        }
+
+        .core-competency p {
+            margin-top: 0;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+            position: relative;
+        }
+
+        .resp-title {
+            display: block;
+            margin-bottom: 0.4rem; /* Match the spacing between other list items */
+        }
+
+        /* Style for the dates immediately below job header */
+        h2 + p em {
+            display: block;
+            color: var(--primary-color); /* Same blue color as the headers */
+            font-size: 1.2rem; /* Larger font size */
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Make sure the job title stands out more */
+        .job-header {
+            font-weight: 500;
+        }
+
+        /* Add more spacing before the responsibilities */
+        .resp-title {
+            margin-top: 0.5rem;
+        }
+
+        /* Ensure consistent spacing for all list items */
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 0;
+        }
+
+        .timeline::before {
+            display: none;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .timeline-item::before {
+            display: none;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            margin-right: 1rem;
+        }
+
+        .timeline-date {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-location {
+            margin-bottom: 0.4rem;
+            font-style: italic;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .job-date-line {
+            position: relative;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .job-date {
+            position: relative;
+            top: -0.7em;
+            float: right;
+            background-color: #fff;
+            padding: 0 5px;
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .publications-list li {
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .publications-list li {
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .skill-category {
+            margin-bottom: 0.75rem;
+        }
+
+        .skill-title {
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+
+        .skill-list {
+            color: #555;
+            line-height: 1.3;
+            font-size: 0.95rem;
+        }
+
+        p {
+            margin-bottom: 0.75rem;
+        }
+
+        .section-heading {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .section-heading::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .experience-dates {
+            color: #666;
+            font-weight: 400;
+            min-width: 6rem;
+            display: inline-block;
+            text-align: right;
+            padding-right: 1rem;
+        }
+
+        /* Fix styling issues in generated content */
+        #main-content h1 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.3rem;
+        }
+
+        #main-content h2 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            text-transform: none;
+        }
+
+        /* Add styling for links */
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* PDF-specific styles */
+        @page {
+            size: A4 portrait;
+            margin: 20mm 15mm 20mm 15mm;
+        }
+
+        @media print {
+            .mono-emoji {
+                /* For PDF output, we'll keep emojis visible but make them grayscale */
+                filter: grayscale(100%);
+            }
+
+            h2 {
+                padding-left: 0;
+                /* Ensure page breaks don't occur right after section headings */
+                page-break-after: avoid;
+            }
+
+            body {
+                font-size: 10pt;
+                background: none;
+                color: black;
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            a {
+                text-decoration: none;
+                color: black;
+            }
+
+            .photo-container {
+                border: 1px solid #000;
+            }
+
+            h2 {
+                color: black;
+                border-bottom-color: black;
+            }
+
+            /* Avoid orphaned list items */
+            li {
+                page-break-inside: avoid;
+            }
+
+            /* Prevent page breaks inside job entries */
+            h2 + p + ul {
+                page-break-inside: avoid;
+            }
+
+            /* Ensure contact info doesn't split across pages */
+            .contact-info {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cv-header {
+                flex-direction: column;
+            }
+
+            .header-left {
+                align-self: center;
+                margin-right: 0;
+                margin-bottom: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .photo-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .name-position {
+                text-align: center;
+            }
+
+            .header-right {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-info {
+                text-align: center;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .contact-info p {
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 2rem;
+                text-align: center;
+            }
+
+            .skills {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="cv-header">
+            <div class="header-left">
+                <div class="photo-container">
+                    
+                </div>
+                <div class="name-position">
+                    <h1>Dmitry Mikushin</h1>
+                    <div class="position">HPC/Embedded Engineer, Architect or Human/AI Team Lead</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="contact-info">
+                    <p><span class="mono-emoji">📍</span> 1815 Clarens, Switzerland</p>
+                    <p><span class="mono-emoji">📞</span> +41 78 925 90 90</p>                    <p><span class="mono-emoji">✉️</span> <a href="mailto:dmitry@kernelgen.org">dmitry@kernelgen.org</a></p>
+                    <p><span class="mono-emoji">🌐</span> <a href="https://mikush.in" target="_blank">mikush.in</a></p>
+                    <p><span class="mono-emoji">🎂</span> 3 May 1986</p>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-content">
+<ul>
+<li><strong>Work authorization in Switzerland</strong>: work permit B already in place</li>
+</ul>
+<h2><span class="mono-emoji">💼</span> PROFESSIONAL SUMMARY</h2>
+<p>I work at the intersection of research and industrial programming (C/C++, Fortran, Python), where classical supercomputing (MPI, OpenMP) meets modern hardware (GPUs, TPUs, embedded ASICs) and performance optimization.</p>
+<p>As co-founder of Purple Gaze Inc., I've developed eyetracking systems that are both more affordable and faster than many existing solutions.</p>
+<p>My academic work culminated in earning a PhD from the University of Lausanne, where I developed specialized supercomputing software for economics and finance applications.</p>
+<p>My expertise in CUDA, OpenCL, OpenACC, and Machine Learning has established me as an effective consultant in these fields.</p>
+<p>I provide effective GPU-accelerated solutions to organizations facing complex computational challenges. My skills help teams successfully port legacy algorithms to utilize NVIDIA H100/GH200 GPU architectures, implement memory-optimized algorithms for better compute-memory balance, and develop portable cross-platform solutions that work reliably across different computing environments.</p>
+<p>As a regular user of AI-assisted development tools, I incorporate LLMs into my daily workflow to improve productivity and solve technical challenges more efficiently.</p>
+<h2><span class="mono-emoji">🏆</span> KEY ACHIEVEMENTS</h2>
+<ul>
+<li><strong>GPU-Accelerated Algorithms Design</strong>: Created and implemented numerous high-performance GPU algorithms in many domains: CFD, economics, computer vision, homomorphic encryption, self-driving simulators, and even radio astronomy</li>
+<li><strong>Cross-Platform Development</strong>: Successfully ported multiple research and production software packages to diverse operating systems, architectures, and platforms</li>
+<li><strong>Research Impact</strong>: Co-authored significant research papers and industrial presentations in high-performance computing and computer vision</li>
+<li><strong>Entrepreneurial Success</strong>: Co-founded Purple Gaze Inc. and spearheaded development of the company's first "Foxy" eyetracking device</li>
+</ul>
+<h2><span class="mono-emoji">🔧</span> CORE COMPETENCIES</h2>
+<ul>
+<li>
+<p><strong>Technical Team Lead/CTO</strong>: Proven ability to develop technical strategy for long-term projects, lead by example through technical excellence, and effectively direct mixed human/AI teams</p>
+</li>
+<li>
+<p><strong>HPC/Engineering</strong>: Mastery of the complete development &amp; support cycle for HPC applications on Linux clusters: programming, multi-architecture parallelization, debugging, and performance optimization. Experienced with large-scale codebases including MSC Nastran, PyTorch, and MIOpen.</p>
+</li>
+<li>
+<p><strong>GPU Acceleration Expert</strong>: Specialized in memory footprint optimization for large-scale simulations, legacy solver migration to NVIDIA H100/GH200 GPUs, and implementation of highly optimized algorithms for superior compute-memory balance.</p>
+</li>
+<li>
+<p><strong>Research &amp; Development</strong>: Skilled at exploring new technologies and transferring that knowledge to others, designing comprehensive experiments to analyze hardware/software performance, and translating findings into practical methods and tools.</p>
+</li>
+<li>
+<p><strong>AI-Enhanced Development</strong>: Daily practitioner of LLM-assisted coding workflows, leveraging AI tools (shell_gpt, VSCode Agent) to streamline development, troubleshoot complex code, and overcome technical obstacles.</p>
+</li>
+<li>
+<p><strong>Embedded SW/HW</strong>: Developer of specialized embedded machine vision systems. Designed and implemented Linux firmware and real-time processing services for resource-constrained ARM processors (eyetracking), with expertise in real-time device-host communication.</p>
+</li>
+<li>
+<p><strong>Compilers Development</strong>: Deep understanding of compiler internals with contributions to LLVM. Creator of KernelGen - an innovative auto-parallelizing Fortran/C compiler for NVIDIA GPUs.</p>
+</li>
+</ul>
+<h2><span class="mono-emoji">🔧</span> TECHNICAL SKILLS</h2>
+<ul>
+<li><strong>Programming Languages</strong>: C/C++, CUDA/HIP/OpenCL, Fortran, Python, Perl, Bash; an active learner of Rust</li>
+<li><strong>Development Tools</strong>: CMake/make, git, gdb, vim, tmux</li>
+<li><strong>AI Tools</strong>: shell_gpt, ollama, gguf, VSCode agent</li>
+<li><strong>High Performance Computing</strong>: GPU acceleration, OpenMP (multicore and GPU offload), MPI, algorithm optimization</li>
+<li><strong>GPU Expertise</strong>: NVIDIA H100/GH200, Parallel Programming, Memory optimization, Performance tuning, Kepler/Volta assembler</li>
+<li><strong>CFD &amp; Numerical Methods</strong>: Unstructured solvers, Gauss-Seidel methods, Fréchet derivatives, Memory reduction techniques</li>
+<li><strong>Compiler Development</strong>: LLVM contributions, Clang/LLVM plugins developer</li>
+<li><strong>Embedded Systems</strong>: UART, U-boot, WiringPi, ADBD, Allwinner, Rockchip, ATTiny85, Cypress FX3, uvc/genicam camera vision</li>
+<li><strong>Cloud Technologies</strong>: Docker, Singularity, ssh</li>
+<li><strong>Operating Systems</strong>: Linux, FreeBSD</li>
+<li><strong>Hardware</strong>: Electronics prototyping, soldering, circuit checking, milling machine operation</li>
+</ul>
+<h2><span class="mono-emoji">💼</span> PROFESSIONAL EXPERIENCE</h2>
+<h2>🚀 Co-Founder &amp; CTO at Purple Gaze Inc.</h2>
+<p><em>December 2019 - Present</em></p>
+<ul>
+<li><strong>Location:</strong> Lausanne Area, Switzerland</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Developed research-quality high-performance eyetracking hardware and software stack</li>
+<li>Created company's first 'Foxy' eyetracking device product</li>
+<li>Lead development of high-precision embedded systems for eyetracking and machine vision</li>
+<li>Direct technical strategy and engineering team in creating cutting-edge vision technologies</li>
+</ul>
+</li>
+</ul>
+<h2>🛠️ Senior Software Engineer at Hexagon Manufacturing Intelligence</h2>
+<p><em>June 2023 - April 2025</em></p>
+<ul>
+<li><strong>Location:</strong> Renens, Vaud, Switzerland (Remote)</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Implemented GPU support for Cradle CFD and MSC Nastran simulation software on NVIDIA platforms</li>
+<li>Led development of GPU-accelerated unstructured CFD solver that achieved 15% performance improvement on a single NVIDIA H100 GPU compared to 384 CPU threads on 4× AMD EPYC 7763 CPUs</li>
+<li>Developed reduced-memory multicolor Gauss-Seidel method using Fréchet derivative, achieving 45% memory reduction</li>
+<li>Implemented GH200 support by porting code to ARM64 with Clang</li>
+<li>Created portable OpenMP code for both multicore and GPU offload scenarios</li>
+<li>Presented research and achievements at NVIDIA GPU Technology Conference (GTC) 2025</li>
+</ul>
+</li>
+</ul>
+<h2>💻 HIP/C++ Developer (Contractor) at AMD</h2>
+<p><em>February 2022 - June 2023</em></p>
+<ul>
+<li><strong>Location:</strong> Zug, Switzerland (Remote)</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Developed GPU optimizations for MIOpen machine learning engine</li>
+<li>Enhanced performance of machine learning frameworks through advanced C++ and CUDA implementations</li>
+<li>Collaborated with cross-functional teams to improve AMD's GPU computing capabilities</li>
+</ul>
+</li>
+</ul>
+<h2>📋 Research Assistant at University of Lausanne (UNIL)</h2>
+<p><em>April 2019 - June 2023</em></p>
+<ul>
+<li><strong>Location:</strong> Lausanne Area, Switzerland</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Conducted research in GPU computing applications</li>
+<li>Collaborated with academic teams on parallel computing projects</li>
+</ul>
+</li>
+</ul>
+<h2>💻 CUDA/C++ Developer at Valeo</h2>
+<p><em>2018 - 2019</em></p>
+<ul>
+<li><strong>Location:</strong> Remote</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Designed and implemented efficient GPU kernels for self-driving car lidar simulation (ADAS)</li>
+<li>Optimized performance for real-time processing requirements</li>
+<li>Contributed to autonomous vehicle technology development</li>
+</ul>
+</li>
+</ul>
+<h2>💻 CUDA/C++ Developer at Excellian</h2>
+<p><em>2017 - 2018</em></p>
+<ul>
+<li><strong>Location:</strong> Remote</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Implemented GPGPU for high-performance Monte-Carlo backpricing valuation for financial customers</li>
+<li>Completely rewrote Scala code into C++ &amp; CUDA with skip-ahead optimizations for Sobol QRNG</li>
+<li>Prepared backend for integration with Murex financial platform</li>
+</ul>
+</li>
+</ul>
+<h2>📋 Assistant at University of Zurich</h2>
+<p><em>April 2015 - April 2019</em></p>
+<ul>
+<li><strong>Location:</strong> Zürich Area, Switzerland</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Applied GPGPU techniques for computational economics in Dr. Simon Scheidegger's research team</li>
+<li>Contributed to academic research bridging high-performance computing and economic modeling</li>
+<li>Supported teaching and research activities in parallel computing</li>
+</ul>
+</li>
+</ul>
+<h2>🔬 Owner / CUDA Educator &amp; Researcher at Applied Parallel Computing LLC</h2>
+<p><em>March 2014 - Present</em></p>
+<ul>
+<li><strong>Location:</strong> Montreux, Vaud, Switzerland</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Created original courses in GPU computing, CUDA, OpenACC and related technologies</li>
+<li>Organized and led a small team of consultants for EMEA region</li>
+<li>Provided specialized training in NVIDIA and AMD GPU computing technologies to German automotive industry clients and universities</li>
+<li>Consulted customers in industry and academia on-site</li>
+<li>Expertise in CUDA and HIP frameworks for high-performance computing</li>
+</ul>
+</li>
+</ul>
+<h2>🚀 Doctoral Assistant at USI Università della Svizzera italiana</h2>
+<p><em>April 2012 - May 2016</em></p>
+<ul>
+<li><strong>Location:</strong> Lugano, Switzerland</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Taught Master-level courses in computer science</li>
+<li>Conducted doctoral research in parallel computing</li>
+<li>Supported academic programs through teaching and research assistance</li>
+</ul>
+</li>
+</ul>
+<h2>💼 Visiting Scholar at Rutgers University</h2>
+<p><em>April 2013 - July 2013</em></p>
+<ul>
+<li><strong>Location:</strong> New Brunswick, New Jersey</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Assisted research activities of Prof. Eddy Zheng Zhang</li>
+<li>Contributed to academic research in parallel computing and GPU applications</li>
+<li>Collaborated with international research teams on advanced computing projects</li>
+</ul>
+</li>
+</ul>
+<h2>👑 Technical Lead at Applied Parallel Computing LLC</h2>
+<p><em>September 2011 - November 2012</em></p>
+<ul>
+<li><strong>Location:</strong> Dubna, Moscow Region</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Led company's GPGPU R&amp;D projects and training services</li>
+<li>Directed technical teams in developing parallel computing solutions</li>
+<li>Managed client relationships for technical training programs</li>
+</ul>
+</li>
+</ul>
+<h2>💻 Developer Technology Engineer at NVIDIA</h2>
+<p><em>October 2009 - August 2011</em></p>
+<ul>
+<li><strong>Location:</strong> Moscow, Russian Federation</li>
+<li>
+<p><span class='resp-title'><strong>Responsibilities:</strong></span></p>
+<ul>
+<li>Developed GPU spectral solver benchmark and GPU kernels generator for COSMO model (Deutscher Wetterdienst)</li>
+<li>Implemented SPU-interacting radix sort for rigid bodies broad phase algorithm on Cell Broadband Engine processor (Sony PlayStation 3)</li>
+<li>Created proof-of-concept Multi-GPU applications to demonstrate hardware benefits to customers</li>
+<li>Contributed to PhysX engine Linux port and developed experimental Tegra/ARM ports</li>
+<li>Provided CUDA/HPC customer support and training sessions</li>
+</ul>
+</li>
+</ul>
+<h2><span class="mono-emoji">🎓</span> Education</h2>
+<h2><span class="mono-emoji">📝</span> Doctor of Philosophy (PhD) in Business Analytics</h2>
+<p><em>May 2019 - February 2023</em></p>
+
+<ul>
+<li><strong>Institution:</strong> University of Lausanne (UNIL)</li>
+<li><strong>Location:</strong> Lausanne, Switzerland</li>
+<li><strong>Dissertation:</strong> High-performance computing approaches to solve large-scale dynamic models in economics and finance</li>
+<li><strong>Focus Areas:</strong> Dynamic programming, Compilers, C++, Combinatorics, GPGPU, High Performance Computing (HPC)</li>
+</ul>
+<h2><span class="mono-emoji">📄</span> MSc in Computational Mathematics and System Programming</h2>
+<p><em>2003 - 2008</em></p>
+
+<ul>
+<li><strong>Institution:</strong> Lomonosov Moscow State University (MSU)</li>
+<li><strong>Location:</strong> Moscow, Russia</li>
+</ul>
+<h2><span class="mono-emoji">📚</span> Publications (peer-reviewed)</h2>
+<ul>
+<li>🔥 Nishikawa, H., Nakashima, Y., Mikushin, D., &amp; Lee, J. (2025). A Reduced-Memory Multicolor Gauss-Seidel Relaxation Scheme for Implicit Unstructured-Polyhedral-Grid CFD Solver on GPU. In <em>AIAA AVIATION 2025 Forum</em>. (to appear).</li>
+<li>🌟 Mikushin, D., Likhogrud, N., Zhang, E., &amp; Bergström, C. (2014). KernelGen--The Design and Implementation of a Next Generation Compiler Platform for Accelerating Numerical Models on GPUs. In <em>2014 IEEE International Parallel &amp; Distributed Processing Symposium Workshops</em>, pp. 1011--1020. IEEE. (Cited 37 times)</li>
+<li>🌟 Kuzmin, A., Mikushin, D., &amp; Lempitsky, V. (2017). End-to-end learning of cost-volume aggregation for real-time dense stereo. In <em>2017 IEEE 27th International Workshop on Machine Learning for Signal Processing (MLSP)</em>, pp. 1--6. IEEE. (Cited 31 times)</li>
+<li>⭐ Brumm, J., Mikushin, D., Scheidegger, S., &amp; Schenk, O. (2015). Scalable high-dimensional dynamic stochastic economic modeling. <em>Journal of Computational Science</em>, 11, 12--25. Elsevier. (Cited 23 times)</li>
+<li>⭐ Scheidegger, S., Mikushin, D., Kubler, F., &amp; Schenk, O. (2018). Rethinking large-scale economic modeling for efficiency: Optimizations for gpu and xeon phi clusters. In <em>2018 IEEE International Parallel and Distributed Processing Symposium (IPDPS)</em>, pp. 610--619. IEEE. (Cited 16 times)</li>
+<li>📄 Mikushin, D., &amp; Likhogrud, N. (2012). Kernelgen--a toolchain for automatic gpu-centric applications porting. . (Cited 4 times)</li>
+<li>📄 Georgieva Belorgey, M., Dandjee, S., Gama, N., Jetchev, D., &amp; Mikushin, D. (2023). Falkor: Federated Learning Secure Aggregation Powered by AESCTR GPU Implementation. In <em>Proceedings of the 11th Workshop on Encrypted Computing &amp; Applied Homomorphic Cryptography</em>, pp. 11--22. (Cited 4 times)</li>
+<li>📄 Jian, N., Mikushin, D., Yan, J., Barriot, J., Wu, Y., &amp; Wang, G. (2020). A GPU-based phase tracking method for planetary radio science applications. <em>Measurement Science and Technology</em>, 31(4), 045902. IOP Publishing. (Cited 3 times)</li>
+<li>📄 Nguyen, D., Mikushin, D., &amp; Man-Hong, Y. (2021). HiQ-ProjectQ: Towards user-friendly and high-performance quantum computing on GPUs. In <em>2021 Design, Automation &amp; Test in Europe Conference &amp; Exhibition (DATE)</em>, pp. 1056--1061. IEEE. (Cited 2 times)</li>
+<li>📄 Stepanenko, V., &amp; Mikushin, D. (2008). Numerical modeling of mezoscale dynamics in the atmosphere and tracer transport above hydrologically inhomogeneous land. <em>Computational Technologies</em>, 13(Special issue 3), 104--110. (Cited 1 times)</li>
+<li>📄 Mikushin, D., &amp; Stepanenko, V. (2010). The implementation of regional atmospheric model numerical algorithms for Cell Broadband Engine Architecture-based clusters. In <em>Parallel Processing and Applied Mathematics: 8th International Conference, PPAM 2009, Wroclaw, Poland, September 13-16, 2009. Revised Selected Papers, Part I 8</em>, pp. 525--534. Springer Berlin Heidelberg. (Cited 1 times)</li>
+<li>📄 Mikushin, D., Korotaev, K., &amp; MacInnes, W. (2019). On coupling of EyeStalker algorithm with USB3.0 camera for affordable eye tracking. Poster presented at <em>20th European Conference on Eye Movements</em>, p. 392.</li>
+</ul>
+        </div>
+    </div>
+</body>
+</html>
