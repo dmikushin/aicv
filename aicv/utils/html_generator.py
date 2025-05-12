@@ -17,8 +17,14 @@ def create_html_file(html_content, output_path, silent=False):
     if not silent:
         print(f"CV saved to {output_path}")
 
-def create_styled_html(content, personal_info, photo_html):
-    """Creates a full HTML document with styling and structure"""
+def create_styled_html(content, personal_info, photo_html, strict_page_breaks=False):
+    """Creates a full HTML document with styling and structure
+    Args:
+        content (str): Main HTML content
+        personal_info (dict): Personal info dict
+        photo_html (str): HTML for photo
+        strict_page_breaks (bool): If True, enforce old page break rules. Default is False (new behavior).
+    """
 
     # Split name into parts for PhD styling if applicable
     name = personal_info['name']
@@ -429,14 +435,12 @@ def create_styled_html(content, personal_info, photo_html):
 
         @media print {{
             .mono-emoji {{
-                /* For PDF output, we'll keep emojis visible but make them grayscale */
                 filter: grayscale(100%);
             }}
 
             h2 {{
                 padding-left: 0;
-                /* Ensure page breaks don't occur right after section headings */
-                page-break-after: avoid;
+                {'page-break-after: avoid;' if strict_page_breaks else ''}
             }}
 
             body {{
@@ -466,20 +470,9 @@ def create_styled_html(content, personal_info, photo_html):
                 border-bottom-color: black;
             }}
 
-            /* Avoid orphaned list items */
-            li {{
-                page-break-inside: avoid;
-            }}
-
-            /* Prevent page breaks inside job entries */
-            h2 + p + ul {{
-                page-break-inside: avoid;
-            }}
-
-            /* Ensure contact info doesn't split across pages */
-            .contact-info {{
-                page-break-inside: avoid;
-            }}
+            {'li { page-break-inside: avoid; }' if strict_page_breaks else ''}
+            {'h2 + p + ul { page-break-inside: avoid; }' if strict_page_breaks else ''}
+            {'.contact-info { page-break-inside: avoid; }' if strict_page_breaks else ''}
         }}
 
         @media (max-width: 768px) {{
