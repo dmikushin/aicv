@@ -64,27 +64,27 @@ def test_html_rendering(cv_path, fragments_dir):
         md_content = """
 # John Doe
 
-## 💼 Professional Experience
+## Professional Experience
 
-### 🚀 Co-Founder & CTO at Purple Gaze Inc.
+### Co-Founder & CTO at Purple Gaze Inc.
 *December 2019 - Present*
 
 - **Location:** Lausanne Area, Switzerland
 - **Responsibilities:**
   - Developed research-quality high-performance eyetracking hardware and software stack
 
-## 🎓 Education
+## Education
 
-### 📝 Doctor of Philosophy (PhD) in Business Analytics
+### Doctor of Philosophy (PhD) in Business Analytics
 *May 2019 - February 2023*
 
 - **Institution:** University of Lausanne (UNIL)
 - **Location:** Lausanne, Switzerland
 - **Dissertation:** High-performance computing approaches to solve large-scale dynamic models
 
-## 📚 Publications (peer-reviewed)
+## Publications (peer-reviewed)
 
-- 🔥 Nishikawa, H., Nakashima, Y., Doe, J., & Lee, J. (2025). A Reduced-Memory Multicolor Gauss-Seidel Relaxation Scheme for Implicit Unstructured-Polyhedral-Grid CFD Solver on GPU. In *AIAA AVIATION 2025 Forum*. (to appear).
+- Nishikawa, H., Nakashima, Y., Doe, J., & Lee, J. (2025). A Reduced-Memory Multicolor Gauss-Seidel Relaxation Scheme for Implicit Unstructured-Polyhedral-Grid CFD Solver on GPU. In *AIAA AVIATION 2025 Forum*. (to appear).
 """
 
     # Process markdown and generate HTML
@@ -93,7 +93,7 @@ def test_html_rendering(cv_path, fragments_dir):
     
     # Save the generated HTML to a file for inspection
     debug_output_path = os.path.join(os.path.dirname(fragments_dir), "debug_output.html")
-    with open(debug_output_path, 'w', encoding='utf-8') as f:
+    with open(debug_output_path, 'w', encoding='utf-8', errors='replace') as f:
         f.write(html_output)
     print(f"Debug output saved to {debug_output_path}")
     
