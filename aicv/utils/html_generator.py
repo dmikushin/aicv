@@ -3,6 +3,24 @@ HTML generation utilities for the AI-aware CV generator
 """
 import os
 import re
+import base64
+
+def embed_photo(photo_path):
+    """Generates the HTML for the photo section"""
+    photo_html = '<div class="photo-placeholder">120 × 150</div>'
+
+    try:
+        if os.path.exists(photo_path) and os.path.isfile(photo_path):
+            with open(photo_path, "rb") as img_file:
+                photo_bytes = img_file.read()
+                photo_base64 = base64.b64encode(photo_bytes).decode('utf-8')
+                photo_data = f"data:image/jpeg;base64,{photo_base64}"
+                photo_html = f'<img src="{photo_data}" alt="photo" style="width: 100%; height: 100%; object-fit: cover;">'
+                print(f"Photo found and embedded: {photo_path}")
+    except Exception as e:
+        print(f"Error processing photo: {e}")
+
+    return photo_html
 
 def create_html_file(html_content, output_path, silent=False):
     """Writes HTML content to a file
@@ -17,27 +35,27 @@ def create_html_file(html_content, output_path, silent=False):
     if not silent:
         print(f"CV saved to {output_path}")
 
-def create_styled_html(content, personal_info, photo_html, strict_page_breaks=False):
+def create_styled_html(content, personal_info, strict_page_breaks=False):
     """Creates a full HTML document with styling and structure
     Args:
         content (str): Main HTML content
         personal_info (dict): Personal info dict
-        photo_html (str): HTML for photo
         strict_page_breaks (bool): If True, enforce old page break rules. Default is False (new behavior).
     """
+    # Import here to avoid circular imports
+    from aicv.utils.text_processing import format_personal_info, format_phd_name
 
-    # Split name into parts for PhD styling if applicable
-    name = personal_info['name']
-    name_parts = name.split(' ')
+    # Embed the photo directly into HTML
+    photo_html = embed_photo(personal_info.get('photo', ''))
 
-    # Check if the person has PhD in their title
-    has_phd = False
-    if name and ('PhD' in name or 'Ph.D' in name or 'Ph.D.' in name):
-        has_phd = True
-        # Remove PhD from name
-        name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
-
-    name_with_phd = f"{name},<br>PhD" if has_phd else name
+    # Format name with PhD styling if applicable using the utility function
+    name = personal_info.get('name', '')
+    name_with_phd = format_phd_name(name, 'html')
+    
+    # Simple name for title (without PhD)
+    simple_name = name
+    if ('PhD' in name or 'Ph.D' in name or 'Ph.D.' in name):
+        simple_name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
 
     # Build the document with styling
     html = f'''<!DOCTYPE html>
@@ -45,7 +63,7 @@ def create_styled_html(content, personal_info, photo_html, strict_page_breaks=Fa
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{name} - CV</title>
+    <title>{simple_name} - CV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -532,57 +550,31 @@ def create_styled_html(content, personal_info, photo_html, strict_page_breaks=Fa
                 </div>
                 <div class="name-position">
                     <h1>{name_with_phd}</h1>
-                    <div class="position">{personal_info['position']}</div>
+                    <div class="position">{personal_info.get('position', '')}</div>
                 </div>
             </div>
             <div class="header-right">
                 <div class="contact-info">
-                    <p><span class="mono-emoji">📍</span> {personal_info['address']}</p>
-                    <p><span class="mono-emoji">📞</span> {personal_info['phone']}</p>'''
+                    <p><span class="mono-emoji">📍</span> {personal_info.get('address', '')}</p>
+                    <p><span class="mono-emoji">📞</span> {personal_info.get('phone', '')}</p>'''
 
-    # Add email with link
-    if isinstance(personal_info['email'], dict):
-        email_text = personal_info['email']['text']
-        email_url = personal_info['email']['url']
-        # If it's just an email without a formal protocol, add mailto:
-        if '@' in email_url and not email_url.startswith('mailto:') and not email_url.startswith('http'):
-            email_url = f"mailto:{email_url}"
-        html += f'                    <p><span class="mono-emoji">✉️</span> <a href="{email_url}">{email_text}</a></p>\n'
-    else:
-        # Fallback for backward compatibility
-        html += f'                    <p><span class="mono-emoji">✉️</span> <a href="mailto:{personal_info["email"]}">{personal_info["email"]}</a></p>\n'
+    # Add email with link using our utility function
+    email_formatted = format_personal_info(personal_info, 'email', 'html')
+    if email_formatted:
+        html += f'                    <p><span class="mono-emoji">✉️</span> {email_formatted}</p>\n'
 
-    # Add website with link
-    if isinstance(personal_info['website'], dict):
-        website_text = personal_info['website']['text'].replace('https://', '')
-        website_url = personal_info['website']['url']
-        # Ensure URL has protocol
-        if not website_url.startswith('http'):
-            website_url = f"https://{website_url}"
-        html += f'                    <p><span class="mono-emoji">🌐</span> <a href="{website_url}" target="_blank">{website_text}</a></p>\n'
-    else:
-        # Fallback for backward compatibility
-        website = personal_info['website'].replace('https://', '')
-        html += f'                    <p><span class="mono-emoji">🌐</span> <a href="https://{website}" target="_blank">{website}</a></p>\n'
+    # Add website with link using our utility function
+    website_formatted = format_personal_info(personal_info, 'website', 'html')
+    if website_formatted:
+        html += f'                    <p><span class="mono-emoji">🌐</span> {website_formatted}</p>\n'
 
-    # Add GitHub info if available
-    if personal_info['github']:
-        if isinstance(personal_info['github'], dict):
-            github_text = personal_info['github']['text']
-            github_url = personal_info['github']['url']
-            if not github_url.startswith('http'):
-                # Assume it's a username if not a full URL
-                if '/' not in github_url and not github_url.startswith('@'):
-                    github_url = f"https://github.com/{github_url}"
-                elif not github_url.startswith('https://'):
-                    github_url = f"https://github.com/{github_url}"
-            html += f'                    <p><span class="mono-emoji">💻</span> GitHub: <a href="{github_url}" target="_blank">{github_text}</a></p>\n'
-        else:
-            # Fallback for backward compatibility
-            html += f'                    <p><span class="mono-emoji">💻</span> GitHub: <a href="https://github.com/{personal_info["github"]}" target="_blank">{personal_info["github"]}</a></p>\n'
+    # Add GitHub info if available using our utility function
+    github_formatted = format_personal_info(personal_info, 'github', 'html')
+    if github_formatted:
+        html += f'                    <p><span class="mono-emoji"></span> {github_formatted}</p>\n'
 
     # Add date of birth if available
-    if personal_info['date_of_birth']:
+    if personal_info.get('date_of_birth'):
         html += f'                    <p><span class="mono-emoji">🎂</span> {personal_info["date_of_birth"]}</p>\n'
 
     html += '''                </div>

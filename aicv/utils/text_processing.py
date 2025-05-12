@@ -3,87 +3,6 @@ Text processing utilities for the AI-aware CV generator
 """
 import re
 
-def remove_personal_info_items(markdown_text):
-    """Remove only the basic personal information items from the markdown content that will be displayed in the header."""
-    # Define specific fields to remove - only the ones we display in the header
-    fields_to_remove = [
-        'Name',
-        'Position',
-        'Address',
-        'Phone',
-        'Email',
-        'Website',
-        'Date of Birth'
-    ]
-
-    # Create pattern to match only these specific fields
-    pattern = r'^\s*\-\s*\*\*(' + '|'.join(fields_to_remove) + r')\*\*:.*?$\n'
-
-    # Remove only the matching lines
-    cleaned_text = re.sub(pattern, '', markdown_text, flags=re.MULTILINE)
-
-    # If the first section now starts with blank lines, clean those up
-    cleaned_text = re.sub(r'^\s*\n+', '', cleaned_text)
-
-    return cleaned_text
-
-
-def extract_personal_info(markdown_text):
-    """Extract personal information from markdown text for the header section"""
-    personal_info = {
-        'name': '',
-        'position': '',
-        'address': '',
-        'phone': '',
-        'email': '',
-        'website': '',
-        'date_of_birth': '',
-        'github': ''
-    }
-
-    # Extract individual fields from bulleted list at the top of the file
-    name_match = re.search(r'\*\*Name\*\*:\s*(.*)', markdown_text)
-    if name_match:
-        personal_info['name'] = name_match.group(1).strip()
-
-    position_match = re.search(r'\*\*Position\*\*:\s*(.*)', markdown_text)
-    if position_match:
-        personal_info['position'] = position_match.group(1).strip()
-
-    address_match = re.search(r'\*\*Address\*\*:\s*(.*)', markdown_text)
-    if address_match:
-        personal_info['address'] = address_match.group(1).strip()
-
-    phone_match = re.search(r'\*\*Phone\*\*:\s*(.*)', markdown_text)
-    if phone_match:
-        personal_info['phone'] = phone_match.group(1).strip()
-
-    email_match = re.search(r'\*\*Email\*\*:\s*(.*)', markdown_text)
-    if email_match:
-        personal_info['email'] = extract_link_or_text(email_match.group(1).strip())
-
-    website_match = re.search(r'\*\*Website\*\*:\s*(.*)', markdown_text)
-    if website_match:
-        personal_info['website'] = extract_link_or_text(website_match.group(1).strip())
-
-    dob_match = re.search(r'\*\*Date of Birth\*\*:\s*(.*)', markdown_text)
-    if dob_match:
-        personal_info['date_of_birth'] = dob_match.group(1).strip()
-
-    # GitHub might be in a different section, but we'll try to extract it here
-    github_match = re.search(r'\*\*GitHub\*\*:\s*(.*)', markdown_text)
-    if github_match:
-        personal_info['github'] = extract_link_or_text(github_match.group(1).strip())
-    else:
-        # Some people put this in the website section with GitHub: username, etc.
-        if website_match and "github" in website_match.group(1).lower():
-            github_username = re.search(r'github\.com/([^/\s]+)', website_match.group(1))
-            if github_username:
-                personal_info['github'] = github_username.group(1)
-
-    return personal_info
-
-
 def extract_link_or_text(text):
     """Extract URL and text from markdown link format [text](url) or just return the text"""
     # Check if the text is in markdown link format: [text](url)
@@ -194,3 +113,135 @@ def add_section_emojis(content):
     )
 
     return content
+
+def format_phd_name(name, backend='html'):
+    """Format a name with PhD title consistently across backends.
+    
+    Args:
+        name (str): The person's name, may include PhD variants
+        backend (str): 'html' or 'markdown'
+    
+    Returns:
+        str: Formatted name with PhD consistently displayed
+    """
+    has_phd = False
+    if name and ('PhD' in name or 'Ph.D' in name or 'Ph.D.' in name):
+        has_phd = True
+        # Remove PhD from name
+        name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
+    
+    if has_phd:
+        if backend == 'html':
+            return f"{name},<br>PhD"
+        else:
+            return f"{name}, PhD"
+    return name
+
+def format_website(website, backend='html'):
+    """Format website URL and text consistently across backends.
+    
+    Args:
+        website: String URL or dict with 'url' key
+        backend (str): 'html' or 'markdown'
+    
+    Returns:
+        str: Formatted website reference
+    """
+    if not website:
+        return ""
+        
+    if isinstance(website, dict):
+        website_url = website.get('url', '')
+    else:
+        website_url = website
+    
+    # Remove protocol for display text
+    website_text = re.sub(r'^.*?://', '', website_url)
+    
+    # Ensure URL has protocol
+    if website_url and not website_url.startswith('http'):
+        website_url = f"https://{website_url}"
+    
+    if backend == 'html':
+        return f'<a href="{website_url}" target="_blank">{website_text}</a>'
+    else:
+        return f"[{website_text}]({website_url})"
+
+def format_github(github, backend='html'):
+    """Format GitHub username or URL consistently across backends.
+    
+    Args:
+        github (str): GitHub username or URL
+        backend (str): 'html' or 'markdown'
+    
+    Returns:
+        str: Formatted GitHub reference
+    """
+    if not github:
+        return ""
+    
+    # Extract username from URL or handle username directly
+    if 'github.com/' in github:
+        # Extract username from URL
+        username = github.split('github.com/')[-1].strip('/')
+    elif github.startswith('@'):
+        username = github.lstrip('@')
+    else:
+        username = github  # Assume it's already a username
+    
+    # Normalize URL
+    github_url = f"https://github.com/{username}"
+    
+    # Normalize display text to @username format
+    github_text = f"@{username}"
+    
+    if backend == 'html':
+        # HTML version with GitHub icon SVG (simplified version)
+        github_icon = '<svg width="20" height="20" viewBox="0 0 16 16" style="display:inline-block;vertical-align:middle;fill:currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>'
+        return f'<span class="mono-emoji">{github_icon}</span><a href="{github_url}" target="_blank">{github_text}</a>'
+    else:
+        return f"[{github_text}]({github_url})"
+
+def format_email(email, backend='html'):
+    """Format email address consistently across backends.
+    
+    Args:
+        email (str): Email address
+        backend (str): 'html' or 'markdown'
+    
+    Returns:
+        str: Formatted email reference
+    """
+    if not email:
+        return ""
+        
+    if backend == 'html':
+        return f'<a href="mailto:{email}">{email}</a>'
+    else:
+        return f"[{email}](mailto:{email})"
+
+def format_personal_info(personal_info, field, backend='html'):
+    """Format a specific personal info field consistently across backends.
+    
+    Args:
+        personal_info (dict): Personal information dictionary
+        field (str): Field name to format
+        backend (str): 'html' or 'markdown'
+    
+    Returns:
+        str: Formatted field value
+    """
+    value = personal_info.get(field, "")
+    if not value:
+        return ""
+        
+    if field == 'name':
+        return format_phd_name(value, backend)
+    elif field == 'website':
+        return format_website(value, backend)
+    elif field == 'github':
+        return format_github(value, backend)
+    elif field == 'email':
+        return format_email(value, backend)
+    else:
+        return value

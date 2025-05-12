@@ -7,8 +7,8 @@ from .education import render_education
 from .employment import render_employment
 from .publications import render_publications
 
-def render(json_filename):
-    """Reads a JSON file and renders the content based on its type."""
+def render(json_filename, backend):
+    """Reads a JSON file and renders the content based on its type and backend."""
     # Check if the file exists in the current directory
     if not os.path.exists(json_filename):
         # If not, check in the same directory as cv.md
@@ -23,10 +23,10 @@ def render(json_filename):
         data = json.load(f)
 
     if "education" in data:
-        print(render_education(data["education"]))
+        print(render_education(data["education"], backend))
     elif "employment" in data:
-        print(render_employment(data["employment"]))
+        print(render_employment(data["employment"], backend))
     elif "publications" in data:
-        print(render_publications(data["publications"]))
+        print(render_publications(data["publications"], backend))
     else:
         print("Invalid data format.")

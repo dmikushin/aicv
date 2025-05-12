@@ -1,12 +1,4 @@
-- **Name**: Dmitry Mikushin
-- **Position**: HPC/Embedded Engineer, Architect or Human/AI Team Lead
-- **Address**: 1815 Clarens, Switzerland
-- **Phone**: +41 78 925 90 90
-- **Email**: dmitry@kernelgen.org
-- **Website**: https://mikush.in
-- **Date of Birth**: 3 May 1986
-- **Work authorization in Switzerland**: work permit B already in place
-
+**Work authorization in Switzerland**: work permit B
 
 ## PROFESSIONAL SUMMARY
 
@@ -14,7 +6,7 @@ I work at the intersection of research and industrial programming (C/C++, Fortra
 
 As co-founder of Purple Gaze Inc., I've developed eyetracking systems that are both more affordable and faster than many existing solutions.
 
-My academic work culminated in earning a PhD from the University of Lausanne, where I developed specialized supercomputing software for economics and finance applications.
+I've earned my PhD from the University of Lausanne, where I developed specialized supercomputing software for economics and finance applications.
 
 My expertise in CUDA, OpenCL, OpenACC, and Machine Learning has established me as an effective consultant in these fields.
 
@@ -69,10 +61,13 @@ As a regular user of AI-assisted development tools, I incorporate LLMs into my d
 render('employment.json')
 ```
 
+## EDUCATION
+
 ```pymd
 render('education.json')
 ```
 
+## PUBLICATIONS
 
 ```pymd
 render('publications.json')

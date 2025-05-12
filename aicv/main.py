@@ -7,8 +7,8 @@ Main entry point for the CV generation tool
 import argparse
 import os
 import tempfile
-from aicv.core.processor import generate_markdown, process_markdown_to_html, get_photo_html
-from aicv.utils.text_processing import extract_personal_info
+import json
+from aicv.core.processor import generate
 from aicv.utils.html_generator import create_html_file
 
 def main():
@@ -22,28 +22,40 @@ def main():
     parser.add_argument('--no-page-numbers', action='store_true', help='Disable page numbers in PDF output')
     parser.add_argument('--markdown', type=str, help='Output intermediate Markdown file and exit')
     args = parser.parse_args()
+    
+    # Get the directory of the input file for finding related JSON files
+    input_dir = os.path.dirname(os.path.abspath(args.file_path))
 
-    # First stage of pipeline: Generate the intermediate markdown representation
-    markdown_content = generate_markdown(args.file_path)
+    # Personal information JSON file should always be present
+    personal_json_path = os.path.join(input_dir, 'personal.json')
+    with open(personal_json_path, 'r') as personal_file:
+        personal_info = json.load(personal_file)
+
+    # If photo path is not a valid absolute path,
+    # convert it to an absolute path using the personal_info JSON file directory:
+    if 'photo' in personal_info and personal_info['photo']:
+        photo_path = personal_info['photo']
+        if not os.path.isabs(photo_path):
+            personal_info['photo'] = os.path.join(input_dir, photo_path)
+
+    if args.markdown:
+        backend = 'markdown'
+    else:
+        backend = 'html'
+    
+    # Parse the input Markdown file with all other files included into it,
+    # and generate either Markdown or HTML
+    content = generate(args.file_path, personal_info, backend=backend)
     
     # If markdown output is requested, save it and exit
     if args.markdown:
         # Write to the specified file
         with open(args.markdown, 'w') as f:
-            f.write(markdown_content)
+            f.write(content)
         
         print(f"Markdown representation saved to {args.markdown}")
         return  # Exit early, don't generate HTML/PDF
-
-    # Extract personal information for the photo
-    personal_info = extract_personal_info(markdown_content)
-    
-    # Get the photo HTML
-    photo_html = get_photo_html(args.file_path, personal_info['name'])
-    
-    # Second stage of pipeline: Convert markdown to HTML
-    html_content = process_markdown_to_html(markdown_content, photo_html)
-
+        
     # Determine if we should generate HTML or PDF
     if args.pdf:
         try:
@@ -60,7 +72,7 @@ def main():
             # Create a temporary HTML file for PDF conversion
             with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as temp_file:
                 temp_html_path = temp_file.name
-                create_html_file(html_content, temp_html_path, silent=True)
+                create_html_file(content, temp_html_path, silent=True)
 
             try:
                 # Convert HTML to PDF
@@ -89,7 +101,7 @@ def main():
             output_path = f"{base_name}.html"
 
         # Create the HTML file
-        create_html_file(html_content, output_path)
+        create_html_file(content, output_path)
 
 if __name__ == "__main__":
     main()
