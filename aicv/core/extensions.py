@@ -16,10 +16,11 @@ class PyMdExtension(Extension):
 
 class PyMdPreprocessor(Preprocessor):
     """A preprocessor that identifies `pymd` blocks, executes the Python code within them, and replaces the block with the result."""
-    def __init__(self, personal_info, backend='markdown'):
+    def __init__(self, personal_info, backend='markdown', emojis=True):
         super().__init__(None)
         self.personal_info = personal_info
         self.backend = backend
+        self.emojis = emojis
 
     def run(self, lines):
         new_lines = []
@@ -52,7 +53,7 @@ class PyMdPreprocessor(Preprocessor):
                 try:
                     def render_with_backend(json_filename, backend=self.backend):
                         from aicv.renderers import render as real_render
-                        return real_render(json_filename, backend)
+                        return real_render(json_filename, backend, emojis=self.emojis)
                     exec('\n'.join(pymd_code), {**globals(), 'render': render_with_backend})
                     output = sys.stdout.getvalue()
                     new_lines.extend(output.splitlines())

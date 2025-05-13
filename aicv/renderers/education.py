@@ -2,13 +2,16 @@
 Education section renderer for the AI-aware CV generator
 """
 
-def render_education(education, backend="markdown"):
+def render_education(education, backend="markdown", emojis=True):
     """Custom rendering of education data with our styling and emojis. Supports markdown and html backends."""
+    def get_emoji():
+        return "🎓" if emojis else ""
     if backend == "html":
         html = ""
         for edu in education:
+            emoji = get_emoji()
             html += f'<div class="education-entry">'
-            html += f'<h2>{edu["degree"]}</h2>'
+            html += f'<h2>{emoji + " " if emoji else ""}{edu["degree"]}</h2>'
             html += f'<p class="edu-dates"><em>{edu["dates"]}</em></p>'
             html += f'<ul>'
             html += f'<li><strong>Institution:</strong> {edu["institution"]}</li>'
@@ -23,7 +26,8 @@ def render_education(education, backend="markdown"):
     else:
         md = ""
         for edu in education:
-            md += f"## {edu['degree']}\n"
+            emoji = get_emoji()
+            md += f"## {emoji + ' ' if emoji else ''}{edu['degree']}\n"
             md += f"*{edu['dates']}*\n\n"
             md += f"- **Institution:** {edu['institution']}\n"
             md += f"- **Location:** {edu['location']}\n"

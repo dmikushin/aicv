@@ -11,7 +11,7 @@ import sys
 import os
 import json
 
-def generate(file_path, personal_info, backend='markdown'):
+def generate(file_path, personal_info, backend='markdown', emojis=True):
     """Reads a Markdown file, processes it with the custom extension, and returns the
     processed markdown or html content.
     This provides a clean intermediate markdown or html representation.
@@ -20,19 +20,19 @@ def generate(file_path, personal_info, backend='markdown'):
         file_path (str): Path to the Markdown file
         personal_info (dict): Personal information dictionary
         backend (str): The backend to use for processing. Can be 'markdown' or 'html'
-        
+        emojis (bool): Whether to enable emojis in the CV text (except personal info)
     Returns:
         str: The processed content with all pymd blocks executed
     """
     with open(file_path, 'r') as f:
         file_content = f.read()
 
-    preprocessor = PyMdPreprocessor(personal_info, backend=backend)
+    preprocessor = PyMdPreprocessor(personal_info, backend=backend, emojis=emojis)
     processed_lines = preprocessor.run(file_content.splitlines())
     processed_content = '\n'.join(processed_lines)
 
     if backend == 'html':
-        return create_styled_html(processed_content, personal_info)
+        return create_styled_html(processed_content, personal_info, emojis=emojis)
     else:
         # Import here to avoid circular imports
         from aicv.utils.text_processing import format_personal_info

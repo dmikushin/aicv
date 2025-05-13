@@ -21,6 +21,9 @@ def main():
     parser.add_argument('--paper', type=str, default='A4', help='PDF paper size (default: A4)')
     parser.add_argument('--no-page-numbers', action='store_true', help='Disable page numbers in PDF output')
     parser.add_argument('--markdown', type=str, help='Output intermediate Markdown file and exit')
+    parser.add_argument('--emojis', dest='emojis', action='store_true', help='Enable emojis in CV text (except personal info)')
+    parser.add_argument('--no-emojis', dest='emojis', action='store_false', help='Disable emojis in CV text (except personal info)')
+    parser.set_defaults(emojis=None)
     args = parser.parse_args()
     
     # Get the directory of the input file for finding related JSON files
@@ -42,10 +45,19 @@ def main():
         backend = 'markdown'
     else:
         backend = 'html'
+
+    # Determine emoji default if not set by user
+    if args.emojis is None:
+        if backend == 'markdown':
+            emojis_enabled = False
+        else:
+            emojis_enabled = True
+    else:
+        emojis_enabled = args.emojis
     
     # Parse the input Markdown file with all other files included into it,
     # and generate either Markdown or HTML
-    content = generate(args.file_path, personal_info, backend=backend)
+    content = generate(args.file_path, personal_info, backend=backend, emojis=emojis_enabled)
     
     # If markdown output is requested, save it and exit
     if args.markdown:

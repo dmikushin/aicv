@@ -2,7 +2,7 @@
 Publications section renderer for the AI-aware CV generator
 """
 
-def render_publications(publications, backend="markdown"):
+def render_publications(publications, backend="markdown", emojis=True):
     """
     Custom rendering of publications data with our styling and emojis.
     Publications with "to appear" status are displayed first, then sorted by citation count.
@@ -32,6 +32,20 @@ def render_publications(publications, backend="markdown"):
     # Combine the two lists: "to appear" publications first, then regular publications
     sorted_publications = sorted_to_appear_publications + sorted_regular_publications
 
+    def get_emoji(is_to_appear, citation_count):
+        if not emojis:
+            return ''
+        if is_to_appear:
+            return "🔥"
+        if citation_count > 30:
+            return "🌟"
+        elif citation_count > 15:
+            return "⭐"
+        elif citation_count > 5:
+            return "📊"
+        else:
+            return "📄"
+
     if backend == "html":
         html = '<ul class="publications-list">'
         for pub in sorted_publications:
@@ -39,19 +53,8 @@ def render_publications(publications, backend="markdown"):
 
             # Select emoji based on status and citation count
             is_to_appear = 'note' in pub and pub.get('note') and 'to appear' in pub.get('note', '').lower()
-
-            if is_to_appear:
-                citation_emoji = "🔥"  # Fire emoji for upcoming/to appear publications
-            else:
-                citation_count = pub.get('citations', 0)
-                if citation_count > 30:
-                    citation_emoji = "🌟"
-                elif citation_count > 15:
-                    citation_emoji = "⭐"
-                elif citation_count > 5:
-                    citation_emoji = "📊"
-                else:
-                    citation_emoji = "📄"
+            citation_count = pub.get('citations', 0)
+            citation_emoji = get_emoji(is_to_appear, citation_count)
 
             # Format authors in a consistent way: "Last1, F., Last2, F., & Last3, F."
             authors = []
@@ -163,6 +166,8 @@ def render_publications(publications, backend="markdown"):
             if not is_to_appear and 'citations' in pub and pub['citations'] > 0:
                 citation += f" (Cited {pub['citations']} times)"
 
+            citation = citation.replace(citation_emoji + ' ', '') if citation_emoji else citation
+            citation = f"{citation_emoji + ' ' if citation_emoji else ''}{citation[len(citation_emoji)+1:] if citation_emoji and citation.startswith(citation_emoji + ' ') else citation}"
             html += f'<li>{citation}</li>'
         html += '</ul>'
         return html
@@ -175,19 +180,8 @@ def render_publications(publications, backend="markdown"):
 
             # Select emoji based on status and citation count
             is_to_appear = 'note' in pub and pub.get('note') and 'to appear' in pub.get('note', '').lower()
-
-            if is_to_appear:
-                citation_emoji = "🔥"  # Fire emoji for upcoming/to appear publications
-            else:
-                citation_count = pub.get('citations', 0)
-                if citation_count > 30:
-                    citation_emoji = "🌟"
-                elif citation_count > 15:
-                    citation_emoji = "⭐"
-                elif citation_count > 5:
-                    citation_emoji = "📊"
-                else:
-                    citation_emoji = "📄"
+            citation_count = pub.get('citations', 0)
+            citation_emoji = get_emoji(is_to_appear, citation_count)
 
             # Format authors in a consistent way: "Last1, F., Last2, F., & Last3, F."
             authors = []
@@ -299,6 +293,8 @@ def render_publications(publications, backend="markdown"):
             if not is_to_appear and 'citations' in pub and pub['citations'] > 0:
                 citation += f" (Cited {pub['citations']} times)"
 
+            citation = citation.replace(citation_emoji + ' ', '') if citation_emoji else citation
+            citation = f"{citation_emoji + ' ' if citation_emoji else ''}{citation[len(citation_emoji)+1:] if citation_emoji and citation.startswith(citation_emoji + ' ') else citation}"
             md += f"- {citation}\n"
 
         return md

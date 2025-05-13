@@ -35,12 +35,13 @@ def create_html_file(html_content, output_path, silent=False):
     if not silent:
         print(f"CV saved to {output_path}")
 
-def create_styled_html(content, personal_info, strict_page_breaks=False):
+def create_styled_html(content, personal_info, strict_page_breaks=False, emojis=True):
     """Creates a full HTML document with styling and structure
     Args:
         content (str): Main HTML content
         personal_info (dict): Personal info dict
         strict_page_breaks (bool): If True, enforce old page break rules. Default is False (new behavior).
+        emojis (bool): Whether to enable emojis in the CV text (except personal info)
     """
     # Import here to avoid circular imports
     from aicv.utils.text_processing import format_personal_info, format_phd_name
@@ -56,6 +57,15 @@ def create_styled_html(content, personal_info, strict_page_breaks=False):
     simple_name = name
     if ('PhD' in name or 'Ph.D' in name or 'Ph.D.' in name):
         simple_name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
+
+    # If emojis are disabled, strip all non-personal-info emojis from content
+    if not emojis:
+        import re
+        # Remove emoji spans from section headers and content, but not from personal info
+        # Remove <span class="mono-emoji">...</span> in main content (not in contact-info)
+        content = re.sub(r'<span class="mono-emoji">[^<]*</span> ?', '', content)
+        # Remove leading unicode emoji in h2/h3/ul/li, etc.
+        content = re.sub(r'(<h[12][^>]*>|<li[^>]*>|^)[\U0001F300-\U0001FAFF\U00002700-\U000027BF\U00002600-\U000026FF\U0001F000-\U0001FFFF] ?','\\1', content)
 
     # Build the document with styling
     html = f'''<!DOCTYPE html>
