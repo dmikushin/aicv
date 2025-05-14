@@ -33,8 +33,8 @@ def convert_markdown_links(html_content):
     return re.sub(pattern, r'<a href="\3" target="_blank">\2</a>', html_content)
 
 
-def add_section_emojis(content):
-    """Add appropriate emojis to section headers based on their content, but skip job headers"""
+def add_section_emojis(content, backend):
+    """Add appropriate emojis to section headers based on their content, but skip job headers. Supports both HTML and markdown headings."""
 
     # Define a mapping of section keywords to emojis
     section_emojis = {
@@ -69,48 +69,36 @@ def add_section_emojis(content):
                 return emoji
         return '📄'  # Default emoji if no match
 
-    # First, we'll process the custom job headers and remove the special class
-    # but keep their existing emoji structure
-    content = re.sub(
-        r'<h2>(.*?)<span class=\'job-header\'>(.*?)</span>(.*?)</h2>',
-        r'<h2>\1\2\3</h2>',
-        content
-    )
+    if backend == 'html':
+        # Replace h1 HTML tags with ones containing emojis
+        content = re.sub(
+            r'<h1>(.*?)</h1>',
+            lambda m: f'<h1><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h1>',
+            content
+        )
 
-    # For all h1 tags and h2 tags that aren't job headers (don't contain the job-header class)
-    # We need two separate regex patterns to avoid overwriting job headers
+        # Replace h2 HTML tags with ones containing emoji
+        content = re.sub(
+            r'<h2>(.*?)</h2>',
+            lambda m: f'<h2><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h2>',
+            content
+        )
+    elif backend == 'markdown':
+        # Replace '#' (h1) Markdown tags with ones containing emojis
+        content = re.sub(
+            r'^(#) ([^#\n][^\n]*)$',
+            lambda m: f'{m.group(1)} {find_emoji(m.group(2))} {m.group(2)}',
+            content,
+            flags=re.MULTILINE
+        )
 
-    # Replace h1 tags with ones containing emojis
-    content = re.sub(
-        r'<h1>(.*?)</h1>',
-        lambda m: f'<h1><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h1>',
-        content
-    )
-
-    # Replace h2 tags but only those that don't already have emojis
-    # First, capture h2 tags that already have emojis (contain emoji unicode characters)
-    emoji_pattern = re.compile(r'<h2>([^<]*?[\U0001F000-\U0001FFFF][^<]*?)</h2>')
-    emoji_h2_tags = emoji_pattern.findall(content)
-
-    # Create a safe pattern that doesn't match h2 tags that already have emojis
-    # We'll replace only those h2 tags that don't have emojis yet
-    for tag in emoji_h2_tags:
-        # Replace with a temporary marker
-        content = content.replace(f'<h2>{tag}</h2>', f'<h2_EMOJI_ALREADY_PRESENT>{tag}</h2_EMOJI_ALREADY_PRESENT>')
-
-    # Now add emojis to remaining h2 tags
-    content = re.sub(
-        r'<h2>(.*?)</h2>',
-        lambda m: f'<h2><span class="mono-emoji">{find_emoji(m.group(1))}</span> {m.group(1)}</h2>',
-        content
-    )
-
-    # Restore the temporarily marked tags
-    content = re.sub(
-        r'<h2_EMOJI_ALREADY_PRESENT>(.*?)</h2_EMOJI_ALREADY_PRESENT>',
-        r'<h2>\1</h2>',
-        content
-    )
+        # Replace '##' (h2) Markdown tags with ones containing emojis
+        content = re.sub(
+            r'^(##) ([^#\n][^\n]*)$',
+            lambda m: f'{m.group(1)} {find_emoji(m.group(2))} {m.group(2)}',
+            content,
+            flags=re.MULTILINE
+        )
 
     return content
 

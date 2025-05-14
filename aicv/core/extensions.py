@@ -38,10 +38,17 @@ class PyMdPreprocessor(Preprocessor):
                 # Flush markdown buffer before entering pymd block
                 if self.backend == 'html' and md_buffer:
                     html = md_converter.convert('\n'.join(md_buffer))
+                    if self.emojis:
+                        from aicv.utils.text_processing import add_section_emojis
+                        html = add_section_emojis(html, self.backend)
                     new_lines.extend(html.splitlines())
                     md_buffer = []
                 elif self.backend == 'markdown' and md_buffer:
-                    new_lines.extend(md_buffer)
+                    md_content = '\n'.join(md_buffer)
+                    if self.emojis:
+                        from aicv.utils.text_processing import add_section_emojis
+                        md_content = add_section_emojis(md_content, self.backend)
+                    new_lines.extend(md_content.splitlines())
                     md_buffer = []
                 pymd_block = True
                 pymd_code = []
@@ -67,8 +74,15 @@ class PyMdPreprocessor(Preprocessor):
         # Flush any remaining markdown buffer at the end
         if self.backend == 'html' and md_buffer:
             html = md_converter.convert('\n'.join(md_buffer))
+            if self.emojis:
+                from aicv.utils.text_processing import add_section_emojis
+                html = add_section_emojis(html, self.backend)
             new_lines.extend(html.splitlines())
         elif self.backend == 'markdown' and md_buffer:
-            new_lines.extend(md_buffer)
+            md_content = '\n'.join(md_buffer)
+            if self.emojis:
+                from aicv.utils.text_processing import add_section_emojis
+                md_content = add_section_emojis(md_content, self.backend)
+            new_lines.extend(md_content.splitlines())
 
         return new_lines
