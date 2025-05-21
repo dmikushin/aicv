@@ -1,6 +1,7 @@
 """
 Employment section renderer for the AI-aware CV generator
 """
+from aicv.utils.escape_latex import escape_latex
 
 def render_employment(employment, backend="markdown", emojis=True):
     """Custom rendering of employment data with our styling and emojis. Supports markdown and html backends."""
@@ -48,7 +49,7 @@ def render_employment(employment, backend="markdown", emojis=True):
             html += '</ul>'
             html += '</div>\n'
         return html
-    else:
+    elif backend == "markdown":
         md = ""
         for job in employment:
             position_emoji = '💼' if emojis else ''
@@ -67,3 +68,30 @@ def render_employment(employment, backend="markdown", emojis=True):
                 md += f"    - {responsibility}\n"
             md += "\n"
         return md
+
+    elif backend == "moderncv":
+        if not employment:
+            return ""
+        lines = ["\\section{Experience}"]
+        for job in employment:
+            # Try to get fields with fallback
+            start_year = job.get('start_year') or job.get('start') or ''
+            end_year = job.get('end_year') or job.get('end') or ''
+            year_range = f"{start_year}--{end_year}" if end_year else f"{start_year}"
+            title = escape_latex(job.get('position', ''))
+            employer = escape_latex(job.get('company', job.get('employer', '')))
+            location = escape_latex(job.get('location', ''))
+            # Responsibilities as description
+            responsibilities = job.get('responsibilities', [])
+            if responsibilities:
+                description = "\\begin{itemize}\n" + "\n".join([f"\\item {escape_latex(r)}" for r in responsibilities]) + "\n\\end{itemize}"
+            else:
+                description = ""
+            lines.append(f"\\cventry{{{escape_latex(year_range)}}}{{{title}}}{{{employer}}}{{{location}}}{{}}{{\\footnotesize {description}}}")
+            # Compose cventry
+            lines.append(f"\\cventry{{{escape_latex(year_range)}}}{{{title}}}{{{employer}}}{{{location}}}{{}}{{\\footnotesize {description}}}")
+            lines.append("\\vskip 2pt")
+        return "\n".join(lines)
+
+    else:
+        raise ValueError("Unsupported backend. Use 'html' or 'markdown'.")

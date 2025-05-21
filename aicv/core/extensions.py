@@ -6,6 +6,9 @@ import io
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 from aicv.renderers import render
+from aicv.backend.html import EmojisFormatterHtml
+from aicv.backend.markdown import EmojisFormatterMarkdown
+from aicv.backend.moderncv import EmojisFormatterModernCV
 
 class PyMdExtension(Extension):
     """A custom Markdown extension to handle `pymd` blocks."""
@@ -39,15 +42,13 @@ class PyMdPreprocessor(Preprocessor):
                 if self.backend == 'html' and md_buffer:
                     html = md_converter.convert('\n'.join(md_buffer))
                     if self.emojis:
-                        from aicv.utils.text_processing import add_section_emojis
-                        html = add_section_emojis(html, self.backend)
+                        html = EmojisFormatterHtml.add_section_emojis(html)
                     new_lines.extend(html.splitlines())
                     md_buffer = []
                 elif self.backend == 'markdown' and md_buffer:
                     md_content = '\n'.join(md_buffer)
                     if self.emojis:
-                        from aicv.utils.text_processing import add_section_emojis
-                        md_content = add_section_emojis(md_content, self.backend)
+                        md_content = EmojisFormatterMarkdown.add_section_emojis(md_content)
                     new_lines.extend(md_content.splitlines())
                     md_buffer = []
                 pymd_block = True
@@ -75,14 +76,12 @@ class PyMdPreprocessor(Preprocessor):
         if self.backend == 'html' and md_buffer:
             html = md_converter.convert('\n'.join(md_buffer))
             if self.emojis:
-                from aicv.utils.text_processing import add_section_emojis
-                html = add_section_emojis(html, self.backend)
+                html = EmojisFormatterHtml.add_section_emojis(html)
             new_lines.extend(html.splitlines())
         elif self.backend == 'markdown' and md_buffer:
             md_content = '\n'.join(md_buffer)
             if self.emojis:
-                from aicv.utils.text_processing import add_section_emojis
-                md_content = add_section_emojis(md_content, self.backend)
+                md_content = EmojisFormatterMarkdown.add_section_emojis(md_content)
             new_lines.extend(md_content.splitlines())
 
         return new_lines

@@ -4,6 +4,57 @@ HTML generation utilities for the AI-aware CV generator
 import os
 import re
 import base64
+from aicv.backend.personal_info import PersonalInfoFormatter
+from aicv.backend.emojis import EmojisFormatter
+
+class EmojisFormatterHtml(EmojisFormatter):
+    @staticmethod
+    def add_section_emojis(content: str) -> str:
+        content = re.sub(
+            r'<h1>(.*?)</h1>',
+            lambda m: f'<h1><span class="mono-emoji">{EmojisFormatter.find_emoji(m.group(1))}</span> {m.group(1)}</h1>',
+            content
+        )
+        content = re.sub(
+            r'<h2>(.*?)</h2>',
+            lambda m: f'<h2><span class="mono-emoji">{EmojisFormatter.find_emoji(m.group(1))}</span> {m.group(1)}</h2>',
+            content
+        )
+        return content
+
+class PersonalInfoFormatterHtml(PersonalInfoFormatter):
+    def format_website(self) -> str:
+        website = self.personal_info.get('website', '')
+        website_text, website_url = PersonalInfoFormatter.parse_website_info(website)
+        if not website_text:
+            return ""
+        return f'<a href="{website_url}" target="_blank">{website_text}</a>'
+
+    def format_linkedin(self) -> str:
+        linkedin = self.personal_info.get('linkedin', '')
+        linkedin_text, linkedin_url = PersonalInfoFormatter.parse_social_info(linkedin, "https://www.linkedin.com/in/", "@", "linkedin.com/in/")
+        linkedin_icon = '<svg width="20" height="20" viewBox="0 0 16 16" style="display:inline-block;vertical-align:middle;fill:currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>'
+        return f'<span class="mono-emoji">{linkedin_icon}</span><a href="{linkedin_url}" target="_blank">{linkedin_text}</a>'
+
+    def format_github(self) -> str:
+        github = self.personal_info.get('github', '')
+        github_text, github_url = PersonalInfoFormatter.parse_social_info(github, "https://github.com/", "@", "github.com/")
+        github_icon = '<svg width="20" height="20" viewBox="0 0 16 16" style="display:inline-block;vertical-align:middle;fill:currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>'
+        return f'<span class="mono-emoji">{github_icon}</span><a href="{github_url}" target="_blank">{github_text}</a>'
+
+    def format_email(self) -> str:
+        email = self.personal_info.get('email', '')
+        if not email:
+            return ""
+        return f'<a href="mailto:{email}">{email}</a>'
+
+    def format_phone(self) -> str:
+        phone = self.personal_info.get('phone', '')
+        return phone or ""
+
+    def format_address(self) -> str:
+        address = self.personal_info.get('address', '')
+        return address or ""
 
 def embed_photo(photo_path):
     """Generates the HTML for the photo section"""
@@ -35,7 +86,7 @@ def create_html_file(html_content, output_path, silent=False):
     if not silent:
         print(f"CV saved to {output_path}")
 
-def create_styled_html(content, personal_info, strict_page_breaks=False, emojis=True):
+def create_html(content, personal_info, strict_page_breaks=False, emojis=True):
     """Creates a full HTML document with styling and structure
     Args:
         content (str): Main HTML content
@@ -43,20 +94,17 @@ def create_styled_html(content, personal_info, strict_page_breaks=False, emojis=
         strict_page_breaks (bool): If True, enforce old page break rules. Default is False (new behavior).
         emojis (bool): Whether to enable emojis in the CV text (except personal info)
     """
-    # Import here to avoid circular imports
-    from aicv.utils.text_processing import format_personal_info, format_phd_name
 
     # Embed the photo directly into HTML
     photo_html = embed_photo(personal_info.get('photo', ''))
 
+    f = PersonalInfoFormatterHtml(personal_info)
+
     # Format name with PhD styling if applicable using the utility function
-    name = personal_info.get('name', '')
-    name_with_phd = format_phd_name(name, 'html')
-    
-    # Simple name for title (without PhD)
-    simple_name = name
-    if ('PhD' in name or 'Ph.D' in name or 'Ph.D.' in name):
-        simple_name = re.sub(r',?\s*(PhD|Ph\.D\.?)', '', name)
+    simple_name = f.format_name()
+    name = simple_name
+    if f.has_phd():
+        name = f"{name}, PhD"
 
     # If emojis are disabled, strip all non-personal-info emojis from content
     if not emojis:
@@ -559,34 +607,19 @@ def create_styled_html(content, personal_info, strict_page_breaks=False, emojis=
                     {photo_html}
                 </div>
                 <div class="name-position">
-                    <h1>{name_with_phd}</h1>
+                    <h1>{name}</h1>
                     <div class="position">{personal_info.get('position', '')}</div>
                 </div>
             </div>
             <div class="header-right">
                 <div class="contact-info">
-                    <p><span class="mono-emoji">📍</span> {personal_info.get('address', '')}</p>
-                    <p><span class="mono-emoji">📞</span> {personal_info.get('phone', '')}</p>'''
+                    <p><span class="mono-emoji">📍</span> {f.format_address()}</p>
+                    <p><span class="mono-emoji">📞</span> {f.format_phone()}</p>'''
 
-    # Add email with link using our utility function
-    email_formatted = format_personal_info(personal_info, 'email', 'html')
-    if email_formatted:
-        html += f'                    <p><span class="mono-emoji">✉️</span> {email_formatted}</p>\n'
-
-    # Add website with link using our utility function
-    website_formatted = format_personal_info(personal_info, 'website', 'html')
-    if website_formatted:
-        html += f'                    <p><span class="mono-emoji">🌐</span> {website_formatted}</p>\n'
-
-    # Add GitHub info if available using our utility function
-    github_formatted = format_personal_info(personal_info, 'github', 'html')
-    if github_formatted:
-        html += f'                    <p><span class="mono-emoji"></span> {github_formatted}</p>\n'
-
-    # Add date of birth if available
-    if personal_info.get('date_of_birth'):
-        html += f'                    <p><span class="mono-emoji">🎂</span> {personal_info["date_of_birth"]}</p>\n'
-
+    html += f'                    <p><span class="mono-emoji">✉️</span> {f.format_email()}</p>\n'
+    html += f'                    <p><span class="mono-emoji">🌐</span> {f.format_website()}</p>\n'
+    html += f'                    <p><span class="mono-emoji"></span> {f.format_github()}</p>\n'
+    html += f'                    <p><span class="mono-emoji">🎂</span> {f.format_date_of_birth()}</p>\n'
     html += '''                </div>
             </div>
         </header>

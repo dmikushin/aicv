@@ -171,7 +171,8 @@ def render_publications(publications, backend="markdown", emojis=True):
             html += f'<li>{citation}</li>'
         html += '</ul>'
         return html
-    else:
+
+    elif backend == "markdown":
         md = ""
 
         # Format each publication according to its type
@@ -298,3 +299,9 @@ def render_publications(publications, backend="markdown", emojis=True):
             md += f"- {citation}\n"
 
         return md
+
+    elif backend == "moderncv":
+        pass
+
+    else:
+        raise ValueError("Unsupported backend. Use 'html' or 'markdown'.")
