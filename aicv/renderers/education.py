@@ -83,7 +83,7 @@ def render_education(education, backend="markdown", emojis=True):
         return md
 
     elif backend == "moderncv":
-        lines = ["\\section{Education}"]
+        lines = []
         for edu in education:
             # Get start and end dates, with fallbacks to old field names
             start_date = edu.get('start_date') or edu.get('start_year') or ''

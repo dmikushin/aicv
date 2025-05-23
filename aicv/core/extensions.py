@@ -3,12 +3,14 @@ Custom Markdown extensions for the AI-aware CV generator
 """
 import sys
 import io
+import re
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
 from aicv.renderers import render
 from aicv.backend.html import EmojisFormatterHtml
 from aicv.backend.markdown import EmojisFormatterMarkdown
 from aicv.backend.moderncv import EmojisFormatterModernCV
+from aicv.utils.escape_latex import escape_latex
 
 class PyMdExtension(Extension):
     """A custom Markdown extension to handle `pymd` blocks."""
@@ -51,6 +53,12 @@ class PyMdPreprocessor(Preprocessor):
                         md_content = EmojisFormatterMarkdown.add_section_emojis(md_content)
                     new_lines.extend(md_content.splitlines())
                     md_buffer = []
+                elif self.backend == 'moderncv' and md_buffer:
+                    latex_content = self._convert_markdown_to_latex('\n'.join(md_buffer))
+                    if self.emojis:
+                        latex_content = EmojisFormatterModernCV.add_section_emojis(latex_content)
+                    new_lines.extend(latex_content.splitlines())
+                    md_buffer = []
                 pymd_block = True
                 pymd_code = []
             elif line.strip() == '```' and pymd_block:
@@ -83,5 +91,121 @@ class PyMdPreprocessor(Preprocessor):
             if self.emojis:
                 md_content = EmojisFormatterMarkdown.add_section_emojis(md_content)
             new_lines.extend(md_content.splitlines())
+        elif self.backend == 'moderncv' and md_buffer:
+            latex_content = self._convert_markdown_to_latex('\n'.join(md_buffer))
+            if self.emojis:
+                latex_content = EmojisFormatterModernCV.add_section_emojis(latex_content)
+            new_lines.extend(latex_content.splitlines())
 
         return new_lines
+
+    def _convert_markdown_to_latex(self, markdown_content):
+        """Convert markdown content to LaTeX format suitable for moderncv."""
+        lines = markdown_content.strip().split('\n')
+        latex_lines = []
+        in_list = False
+
+        for line in lines:
+            line = line.strip()
+
+            if not line:
+                if in_list:
+                    latex_lines.append('\\end{itemize}')
+                    in_list = False
+                latex_lines.append('')
+                continue
+
+            # Handle headers
+            if line.startswith('## '):
+                if in_list:
+                    latex_lines.append('\\end{itemize}')
+                    in_list = False
+                header_text = line[3:].strip()
+                latex_lines.append(f'\\section{{{escape_latex(header_text)}}}')
+
+            elif line.startswith('# '):
+                if in_list:
+                    latex_lines.append('\\end{itemize}')
+                    in_list = False
+                header_text = line[2:].strip()
+                latex_lines.append(f'\\section{{{escape_latex(header_text)}}}')
+
+            elif line.startswith('### '):
+                if in_list:
+                    latex_lines.append('\\end{itemize}')
+                    in_list = False
+                header_text = line[4:].strip()
+                latex_lines.append(f'\\subsection{{{escape_latex(header_text)}}}')
+
+            # Handle list items
+            elif line.startswith('- '):
+                if not in_list:
+                    latex_lines.append('\\begin{itemize}')
+                    in_list = True
+                item_text = line[2:].strip()
+                # Convert markdown formatting in list items
+                item_text = self._convert_markdown_formatting(item_text)
+                latex_lines.append(f'\\item {item_text}')
+
+            # Handle regular paragraphs
+            else:
+                if in_list:
+                    latex_lines.append('\\end{itemize}')
+                    in_list = False
+                # Convert markdown formatting in paragraphs
+                paragraph_text = self._convert_markdown_formatting(line)
+                if paragraph_text:
+                    latex_lines.append(f'{paragraph_text}')
+
+        # Close any remaining list
+        if in_list:
+            latex_lines.append('\\end{itemize}')
+
+        return '\n'.join(latex_lines)
+
+    def _convert_markdown_formatting(self, text):
+        """Convert markdown formatting (bold, italic, etc.) to LaTeX."""
+        # Handle bold text - extract content, escape it, then wrap in \textbf
+        def replace_bold(match):
+            content = match.group(1)
+            escaped_content = escape_latex(content)
+            return f'\\textbf{{{escaped_content}}}'
+        text = re.sub(r'\*\*(.*?)\*\*', replace_bold, text)
+
+        # Handle italic text - extract content, escape it, then wrap in \textit
+        def replace_italic(match):
+            content = match.group(1)
+            escaped_content = escape_latex(content)
+            return f'\\textit{{{escaped_content}}}'
+        text = re.sub(r'\*(.*?)\*', replace_italic, text)
+
+        # Handle inline code - extract content, escape it, then wrap in \texttt
+        def replace_code(match):
+            content = match.group(1)
+            escaped_content = escape_latex(content)
+            return f'\\texttt{{{escaped_content}}}'
+        text = re.sub(r'`(.*?)`', replace_code, text)
+
+        # Escape any remaining LaTeX special characters in the rest of the text
+        # We need to be careful not to escape the LaTeX commands we just added
+        parts = []
+        last_end = 0
+
+        # Find all LaTeX commands we just inserted
+        latex_commands = list(re.finditer(r'\\(?:textbf|textit|texttt)\{[^}]*\}', text))
+
+        for match in latex_commands:
+            # Escape the text before this LaTeX command
+            before_text = text[last_end:match.start()]
+            if before_text:
+                parts.append(escape_latex(before_text))
+            # Keep the LaTeX command as-is
+            parts.append(match.group())
+            last_end = match.end()
+
+        # Escape any remaining text after the last LaTeX command
+        remaining_text = text[last_end:]
+        if remaining_text:
+            parts.append(escape_latex(remaining_text))
+
+        return ''.join(parts)

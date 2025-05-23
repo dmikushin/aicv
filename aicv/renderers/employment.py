@@ -112,7 +112,7 @@ def render_employment(employment, backend="markdown", emojis=True):
     elif backend == "moderncv":
         if not employment:
             return ""
-        lines = ["\\section{Experience}"]
+        lines = []
         for job in employment:
             # Get start and end dates, with fallbacks to old field names
             start_date = job.get('start_date') or job.get('start_year') or job.get('start') or ''
