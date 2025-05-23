@@ -4,7 +4,8 @@
       "position": "Co-Founder & CTO",
       "company": "Purple Gaze Inc.",
       "location": "Lausanne Area, Switzerland",
-      "dates": "December 2019 - Present",
+      "start_date": "December 2019",
+      "end_date": "Present",
       "responsibilities": [
         "Developed research-quality high-performance eyetracking hardware and software stack",
         "Created company's first 'Foxy' eyetracking device product",
@@ -16,7 +17,8 @@
       "position": "Senior Software Engineer",
       "company": "Hexagon Manufacturing Intelligence",
       "location": "Renens, Vaud, Switzerland (Remote)",
-      "dates": "June 2023 - April 2025",
+      "start_date": "June 2023",
+      "end_date": "April 2025",
       "responsibilities": [
         "Implemented GPU support for Cradle CFD and MSC Nastran simulation software on NVIDIA platforms",
         "Led development of GPU-accelerated unstructured CFD solver that achieved 15% performance improvement on a single NVIDIA H100 GPU compared to 384 CPU threads on 4× AMD EPYC 7763 CPUs",
@@ -30,7 +32,8 @@
       "position": "HIP/C++ Developer (Contractor)",
       "company": "AMD",
       "location": "Zug, Switzerland (Remote)",
-      "dates": "February 2022 - June 2023",
+      "start_date": "February 2022",
+      "end_date": "June 2023",
       "responsibilities": [
         "Developed GPU optimizations for MIOpen machine learning engine",
         "Enhanced performance of machine learning frameworks through advanced C++ and CUDA implementations",
@@ -41,7 +44,8 @@
       "position": "Research Assistant",
       "company": "University of Lausanne (UNIL)",
       "location": "Lausanne Area, Switzerland",
-      "dates": "April 2019 - June 2023",
+      "start_date": "April 2019",
+      "end_date": "June 2023",
       "responsibilities": [
         "Conducted research in GPU computing applications",
         "Collaborated with academic teams on parallel computing projects"
@@ -51,7 +55,8 @@
       "position": "CUDA/C++ Developer",
       "company": "Valeo",
       "location": "Remote",
-      "dates": "2018 - 2019",
+      "start_date": "2018",
+      "end_date": "2019",
       "responsibilities": [
         "Designed and implemented efficient GPU kernels for self-driving car lidar simulation (ADAS)",
         "Optimized performance for real-time processing requirements",
@@ -62,7 +67,8 @@
       "position": "CUDA/C++ Developer",
       "company": "Excellian",
       "location": "Remote",
-      "dates": "2017 - 2018",
+      "start_date": "2017",
+      "end_date": "2018",
       "responsibilities": [
         "Implemented GPGPU for high-performance Monte-Carlo backpricing valuation for financial customers",
         "Completely rewrote Scala code into C++ & CUDA with skip-ahead optimizations for Sobol QRNG",
@@ -73,7 +79,8 @@
       "position": "Assistant",
       "company": "University of Zurich",
       "location": "Zürich Area, Switzerland",
-      "dates": "April 2015 - April 2019",
+      "start_date": "April 2015",
+      "end_date": "April 2019",
       "responsibilities": [
         "Applied GPGPU techniques for computational economics in Dr. Simon Scheidegger's research team",
         "Contributed to academic research bridging high-performance computing and economic modeling",
@@ -84,7 +91,8 @@
       "position": "Owner / CUDA Educator & Researcher",
       "company": "Applied Parallel Computing LLC",
       "location": "Montreux, Vaud, Switzerland",
-      "dates": "March 2014 - Present",
+      "start_date": "March 2014",
+      "end_date": "Present",
       "responsibilities": [
         "Created original courses in GPU computing, CUDA, OpenACC and related technologies",
         "Organized and led a small team of consultants for EMEA region",
@@ -97,7 +105,8 @@
       "position": "Doctoral Assistant",
       "company": "USI Università della Svizzera italiana",
       "location": "Lugano, Switzerland",
-      "dates": "April 2012 - May 2016",
+      "start_date": "April 2012",
+      "end_date": "May 2016",
       "responsibilities": [
         "Taught Master-level courses in computer science",
         "Conducted doctoral research in parallel computing",
@@ -108,7 +117,8 @@
       "position": "Visiting Scholar",
       "company": "Rutgers University",
       "location": "New Brunswick, New Jersey",
-      "dates": "April 2013 - July 2013",
+      "start_date": "April 2013",
+      "end_date": "July 2013",
       "responsibilities": [
         "Assisted research activities of Prof. Eddy Zheng Zhang",
         "Contributed to academic research in parallel computing and GPU applications",
@@ -119,7 +129,8 @@
       "position": "Technical Lead",
       "company": "Applied Parallel Computing LLC",
       "location": "Dubna, Moscow Region",
-      "dates": "September 2011 - November 2012",
+      "start_date": "September 2011",
+      "end_date": "November 2012",
       "responsibilities": [
         "Led company's GPGPU R&D projects and training services",
         "Directed technical teams in developing parallel computing solutions",
@@ -130,7 +141,8 @@
       "position": "Developer Technology Engineer",
       "company": "NVIDIA",
       "location": "Moscow, Russian Federation",
-      "dates": "October 2009 - August 2011",
+      "start_date": "October 2009",
+      "end_date": "August 2011",
       "responsibilities": [
         "Developed GPU spectral solver benchmark and GPU kernels generator for COSMO model (Deutscher Wetterdienst)",
         "Implemented SPU-interacting radix sort for rigid bodies broad phase algorithm on Cell Broadband Engine processor (Sony PlayStation 3)",

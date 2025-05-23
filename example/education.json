@@ -4,7 +4,8 @@
       "degree": "Doctor of Philosophy (PhD) in Business Analytics",
       "institution": "University of Lausanne (UNIL)",
       "location": "Lausanne, Switzerland",
-      "dates": "May 2019 - February 2023",
+      "start_date": "May 2019",
+      "end_date": "February 2023",
       "dissertation": "High-performance computing approaches to solve large-scale dynamic models in economics and finance",
       "focus_areas": [
         "Dynamic programming",
@@ -19,7 +20,8 @@
       "degree": "MSc in Computational Mathematics and System Programming",
       "institution": "Lomonosov Moscow State University (MSU)",
       "location": "Moscow, Russia",
-      "dates": "2003 - 2008",
+      "start_date": "2003",
+      "end_date": "2008",
       "department": "Department of Computational Technologies and Modelling (Institute of Numerical Mathematics, Russian Academy of Science)"
     }
   ]
