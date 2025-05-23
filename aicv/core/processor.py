@@ -30,6 +30,8 @@ def generate(file_path: str, personal_info: Dict[str, Any], backend: str = 'mark
     if backend == 'html':
         return create_html(processed_content, personal_info, emojis=emojis)
     elif backend == 'moderncv':
-        return create_moderncv(processed_content, personal_info)
+        # Pass the bibliography content collected during processing
+        bib_content = getattr(preprocessor, 'bib_content', '')
+        return create_moderncv(processed_content, personal_info, bib_content)
     else: # markdown
         return create_markdown(processed_content, personal_info, emojis=emojis)

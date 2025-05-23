@@ -23,10 +23,24 @@ def render(json_filename, backend, emojis=True):
         data = json.load(f)
 
     if "education" in data:
-        print(render_education(data["education"], backend, emojis=emojis))
+        result = render_education(data["education"], backend, emojis=emojis)
+        print(result)
+        return result
     elif "employment" in data:
-        print(render_employment(data["employment"], backend, emojis=emojis))
+        result = render_employment(data["employment"], backend, emojis=emojis)
+        print(result)
+        return result
     elif "publications" in data:
-        print(render_publications(data["publications"], backend, emojis=emojis))
+        result = render_publications(data["publications"], backend, emojis=emojis)
+
+        # Handle moderncv publications which return tuple (latex_content, bib_content)
+        if backend == 'moderncv' and isinstance(result, tuple) and len(result) == 2:
+            latex_content, bib_content = result
+            print(latex_content)
+            return result  # Return the tuple for processing in extensions
+        else:
+            print(result)
+            return result
     else:
         print("Invalid data format.")
+        return None

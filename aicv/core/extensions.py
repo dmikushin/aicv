@@ -26,6 +26,7 @@ class PyMdPreprocessor(Preprocessor):
         self.personal_info = personal_info
         self.backend = backend
         self.emojis = emojis
+        self.bib_content = ""  # Store bibliography content for moderncv
 
     def run(self, lines):
         new_lines = []
@@ -69,7 +70,18 @@ class PyMdPreprocessor(Preprocessor):
                 try:
                     def render_with_backend(json_filename, backend=self.backend):
                         from aicv.renderers import render as real_render
-                        return real_render(json_filename, backend, emojis=self.emojis)
+                        result = real_render(json_filename, backend, emojis=self.emojis)
+
+                        # Handle moderncv publications which return tuple (latex_content, bib_content)
+                        if backend == 'moderncv' and isinstance(result, tuple) and len(result) == 2:
+                            latex_content, bib_content = result
+                            # Store bib_content for later use in document generation
+                            if bib_content:
+                                self.bib_content += bib_content + "\n"
+                            return latex_content
+                        else:
+                            return result if result is not None else ""
+
                     exec('\n'.join(pymd_code), {**globals(), 'render': render_with_backend})
                     output = sys.stdout.getvalue()
                     new_lines.extend(output.splitlines())

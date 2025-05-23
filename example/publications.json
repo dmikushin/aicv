@@ -37,9 +37,9 @@
       "citations": 1
     },
     {
-      "type": "article",
+      "type": "misc",
       "citation_key": "mikushin2012kernelgen",
-      "title": "Kernelgen--a toolchain for automatic gpu-centric applications porting",
+      "title": "KernelGen--a toolchain for automatic GPU-centric applications porting",
       "author": ["Mikushin, Dmitry", "Likhogrud, Nicolas"],
       "year": 2012,
       "citations": 4

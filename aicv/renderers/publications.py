@@ -1,12 +1,13 @@
 """
 Publications section renderer for the AI-aware CV generator
 """
+from aicv.utils.escape_latex import escape_latex
 
 def render_publications(publications, backend="markdown", emojis=True):
     """
     Custom rendering of publications data with our styling and emojis.
     Publications with "to appear" status are displayed first, then sorted by citation count.
-    Supports markdown and html backends.
+    Supports markdown, html, and moderncv backends.
     """
     # First identify "to appear" publications
     to_appear_publications = []
@@ -301,7 +302,107 @@ def render_publications(publications, backend="markdown", emojis=True):
         return md
 
     elif backend == "moderncv":
-        pass
+        # Generate BibTeX entries and return both LaTeX content and bib content
+        bib_entries = []
+        citations = []
+
+        for pub in sorted_publications:
+            # Generate citation key if not provided
+            citation_key = pub.get('citation_key')
+            if not citation_key:
+                # Generate citation key from first author's last name and year
+                first_author = pub['author'][0] if pub['author'] else 'unknown'
+                if "," in first_author:
+                    last_name = first_author.split(",")[0].strip().lower()
+                else:
+                    parts = first_author.split()
+                    last_name = parts[-1].lower() if parts else 'unknown'
+                # Remove non-alphanumeric characters
+                last_name = ''.join(c for c in last_name if c.isalnum())
+                citation_key = f"{last_name}{pub.get('year', '')}"
+
+            # Store citation key for later reference
+            citations.append(citation_key)
+
+            # Generate BibTeX entry
+            pub_type = pub.get('type', 'article')
+
+            # Format authors for BibTeX
+            authors = []
+            for author in pub['author']:
+                # Convert to "Last, First" format for BibTeX
+                if "," in author:
+                    authors.append(author.strip())
+                else:
+                    # Handle "First Last" format
+                    parts = author.split()
+                    if len(parts) >= 2:
+                        last_name = parts[-1]
+                        first_names = " ".join(parts[:-1])
+                        authors.append(f"{last_name}, {first_names}")
+                    else:
+                        authors.append(author)
+
+            authors_str = " and ".join(authors)
+
+            # Build BibTeX entry
+            # Note: Don't escape BibTeX content - BibTeX handles special characters itself
+            bib_entry = f"@{pub_type}{{{citation_key},\n"
+            bib_entry += f"  author = {{{authors_str}}},\n"
+            bib_entry += f"  title = {{{pub['title']}}},\n"
+            bib_entry += f"  year = {{{pub['year']}}}"
+
+            # Add fields based on publication type
+            if pub_type == "article":
+                if 'journal' in pub:
+                    bib_entry += f",\n  journal = {{{pub['journal']}}}"
+                if 'volume' in pub:
+                    bib_entry += f",\n  volume = {{{pub['volume']}}}"
+                if 'number' in pub:
+                    bib_entry += f",\n  number = {{{pub['number']}}}"
+                if 'pages' in pub and pub['pages']:
+                    bib_entry += f",\n  pages = {{{pub['pages']}}}"
+                if 'publisher' in pub and pub['publisher']:
+                    bib_entry += f",\n  publisher = {{{pub['publisher']}}}"
+
+            elif pub_type == "inproceedings":
+                if 'booktitle' in pub:
+                    bib_entry += f",\n  booktitle = {{{pub['booktitle']}}}"
+                if 'pages' in pub and pub['pages']:
+                    bib_entry += f",\n  pages = {{{pub['pages']}}}"
+                if 'organization' in pub and pub['organization']:
+                    bib_entry += f",\n  organization = {{{pub['organization']}}}"
+
+            elif pub_type == "inbook":
+                if 'booktitle' in pub:
+                    bib_entry += f",\n  booktitle = {{{pub['booktitle']}}}"
+                if 'pages' in pub and pub['pages']:
+                    bib_entry += f",\n  pages = {{{pub['pages']}}}"
+
+            elif pub_type == "poster":
+                if 'booktitle' in pub:
+                    bib_entry += f",\n  booktitle = {{{pub['booktitle']}}}"
+                if 'pages' in pub and pub['pages']:
+                    bib_entry += f",\n  pages = {{{pub['pages']}}}"
+
+            # Add note field if present
+            if 'note' in pub and pub['note']:
+                bib_entry += f",\n  note = {{{pub['note']}}}"
+
+            bib_entry += "\n}\n"
+            bib_entries.append(bib_entry)
+
+        # Return both the BibTeX content and citation commands
+        bib_content = "\n".join(bib_entries)
+
+        # Generate citation commands for LaTeX
+        latex_content = "% Publications are managed via bibliography\n"
+        latex_content += "% Use \\nocite{*} to include all references, or \\nocite{key1,key2,...} for specific ones\n"
+        if citations:
+            latex_content += f"\\nocite{{{','.join(citations)}}}\n"
+
+        # Return tuple of (latex_content, bib_content)
+        return (latex_content, bib_content)
 
     else:
-        raise ValueError("Unsupported backend. Use 'html' or 'markdown'.")
+        raise ValueError("Unsupported backend. Use 'html', 'markdown', or 'moderncv'.")

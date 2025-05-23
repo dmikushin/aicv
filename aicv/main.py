@@ -62,7 +62,6 @@ def main():
     if backend == 'moderncv':
         emojis_enabled = False
 
-    bib_content = "" # Initialize bib_content for moderncv case
     content = generate(args.file_path, personal_info, backend=backend, emojis=emojis_enabled)
 
     if args.markdown:
@@ -77,26 +76,21 @@ def main():
         output_pdf_path = base + ".pdf"
 
     if args.moderncv:
-        # 'content' here is latex_content
+        # 'content' here is latex_content with inline bibliography
         tex_base_name = os.path.splitext(output_pdf_path)[0]
         tex_path = tex_base_name + ".tex"
-        bib_path = tex_base_name + ".bib"
 
         with open(tex_path, 'w', encoding='utf-8') as f:
             f.write(content)
-        print(f"Intermediate LaTeX file saved to {tex_path}")
+        print(f"LaTeX file with inline bibliography saved to {tex_path}")
 
-        # TODO Embed inlined BibTeX into .tex file itself, this is possible
-        use_bibtex_run = False
-        if bib_content: # bib_content
-            with open(bib_path, 'w', encoding='utf-8') as f_bib:
-                f_bib.write(bib_content)
-            print(f"BibTeX file saved to {bib_path}")
-            use_bibtex_run = True
+        # Since we're using inline bibliography with filecontents, we need to run bibtex
+        # The LaTeX document itself will contain the .bib data, so we always use bibtex
+        # if there are publications (the content will contain \addbibresource and filecontents)
+        use_bibtex_run = '\\addbibresource' in content and '\\begin{filecontents}' in content
 
         # Pass the directory of the tex file as current_working_dir
         # and the bibtex flag to the compiler function.
-        # The personal_info argument is removed from compile_latex_to_pdf
         compile_latex_to_pdf(tex_path, output_pdf_path, use_bibtex=use_bibtex_run, working_directory=os.path.dirname(tex_path))
 
     elif args.pdf: # PDF via HTML (WeasyPrint)
