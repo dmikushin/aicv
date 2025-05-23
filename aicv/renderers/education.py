@@ -2,6 +2,7 @@
 Education section renderer for the AI-aware CV generator
 """
 from aicv.utils.escape_latex import escape_latex
+import re
 
 def render_education(education, backend="markdown", emojis=True):
     """Custom rendering of education data with our styling and emojis. Supports markdown and html backends."""
@@ -22,6 +23,23 @@ def render_education(education, backend="markdown", emojis=True):
             return f"Until {end}"
         else:
             return ""
+
+    def extract_year(date_string):
+        """Extract year from a date string like 'May 2019' or '2019'"""
+        if not date_string:
+            return ""
+
+        # Handle 'Present' case
+        if date_string.lower() == 'present':
+            return 'present'
+
+        # Try to extract 4-digit year using regex
+        year_match = re.search(r'\b(19|20)\d{2}\b', str(date_string))
+        if year_match:
+            return year_match.group(0)
+
+        # If no 4-digit year found, return the original string
+        return str(date_string)
 
     if backend == "html":
         html = ""
@@ -71,15 +89,20 @@ def render_education(education, backend="markdown", emojis=True):
             start_date = edu.get('start_date') or edu.get('start_year') or ''
             end_date = edu.get('end_date') or edu.get('end_year') or ''
 
+            # Extract years only for moderncv
+            start_year = extract_year(start_date)
+            end_year = extract_year(end_date)
+
             # Format year range for LaTeX, fallback to old 'dates' field
-            if start_date and end_date:
-                year_range = f"{start_date}--{end_date}"
-            elif start_date:
-                year_range = f"{start_date}--present"
-            elif end_date:
-                year_range = f"--{end_date}"
-            elif "dates" in edu:
-                year_range = escape_latex(edu["dates"])
+            if start_year and end_year:
+                if end_year.lower() == 'present':
+                    year_range = f"{start_year}-present"
+                else:
+                    year_range = f"{start_year}-{end_year}"
+            elif start_year:
+                year_range = f"{start_year}-present"
+            elif end_year:
+                year_range = f"-{end_year}"
             else:
                 year_range = ""
 
