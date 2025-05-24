@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """
 AI-aware Curriculum Vitae Generator
-Main entry point for the CV generation tool
+Main entry point for the CV generation tool with ATS support
 """
 
 import argparse
 import json
 import os
 from aicv.core.processor import generate # Keep this for other backends
-from aicv.utils.pdf_converter import convert_html_to_pdf
+from aicv.utils.pdf_converter import (
+    convert_html_to_pdf, 
+    convert_html_to_pdf_with_ats, 
+    load_json_data_for_ats
+)
 from aicv.utils.latex_compiler import compile_latex_to_pdf
 
 def main():
@@ -19,13 +23,12 @@ def main():
     parser.add_argument('--pdf', '-p', action='store_true', help='Generate PDF output only (no HTML via WeasyPrint)')
     parser.add_argument('--pdf-output', type=str, help='Output PDF file path (default: input_file.pdf)')
     parser.add_argument('--moderncv', action='store_true', help='Generate PDF output using moderncv LaTeX style')
-    # The --bibtex flag for compile_latex_to_pdf is handled by checking if a .bib file was generated.
-    # No explicit user flag needed if we auto-detect based on bib_content.
     parser.add_argument('--paper', type=str, default='A4', help='PDF paper size (default: A4, for WeasyPrint PDF)')
     parser.add_argument('--no-page-numbers', action='store_true', help='Disable page numbers in PDF output (for WeasyPrint PDF)')
     parser.add_argument('--markdown', type=str, help='Output intermediate Markdown file and exit')
     parser.add_argument('--emojis', dest='emojis', action='store_true', help='Enable emojis in CV text (except personal info and LaTeX)')
     parser.add_argument('--no-emojis', dest='emojis', action='store_false', help='Disable emojis in CV text')
+    parser.add_argument('--ats', action='store_true', help='Generate ATS-compatible PDF with structured JSON data overlay')
     parser.set_defaults(emojis=None)
     args = parser.parse_args()
 
@@ -73,7 +76,10 @@ def main():
     output_pdf_path = args.pdf_output
     if not output_pdf_path:
         base, _ = os.path.splitext(args.file_path)
-        output_pdf_path = base + ".pdf"
+        if args.ats:
+            output_pdf_path = base + "_ats.pdf"
+        else:
+            output_pdf_path = base + ".pdf"
 
     if args.moderncv:
         # 'content' here is latex_content with inline bibliography
@@ -93,7 +99,7 @@ def main():
         # and the bibtex flag to the compiler function.
         compile_latex_to_pdf(tex_path, output_pdf_path, use_bibtex=use_bibtex_run, working_directory=os.path.dirname(tex_path))
 
-    elif args.pdf: # PDF via HTML (WeasyPrint)
+    elif args.pdf or args.ats: # PDF via HTML (WeasyPrint)
         try:
             html_content_for_pdf = content
             if backend != 'html': # If user specified --pdf with --markdown (which exits) or an unexpected state
@@ -121,7 +127,33 @@ def main():
             if created_temp_html:
                 print(f"Temporary HTML for PDF generation saved to {html_to_convert_path}")
 
-            convert_html_to_pdf(html_to_convert_path, output_pdf_path, paper_size=args.paper, add_page_numbers=not args.no_page_numbers)
+            # Choose PDF conversion method based on ATS flag
+            if args.ats:
+                # Load structured data for ATS
+                employment_data, education_data, publications_data = load_json_data_for_ats(input_dir)
+                
+                convert_html_to_pdf_with_ats(
+                    html_to_convert_path, 
+                    output_pdf_path, 
+                    paper_size=args.paper, 
+                    add_page_numbers=not args.no_page_numbers,
+                    employment_data=employment_data,
+                    education_data=education_data,
+                    publications_data=publications_data
+                )
+                print(f"ATS-compatible PDF generated with structured JSON overlay")
+                print(f"To test ATS functionality:")
+                print(f"  1. Open {output_pdf_path} in a PDF viewer")
+                print(f"  2. Try to select visible text (should not work)")
+                print(f"  3. Use Ctrl+A to select all - you'll get structured JSON data")
+                print(f"  4. This JSON data will be parsed by ATS systems")
+            else:
+                convert_html_to_pdf(
+                    html_to_convert_path, 
+                    output_pdf_path, 
+                    paper_size=args.paper, 
+                    add_page_numbers=not args.no_page_numbers
+                )
 
             if created_temp_html and os.path.exists(html_to_convert_path): # Clean up temp html
                 os.remove(html_to_convert_path)
@@ -133,7 +165,7 @@ def main():
         except Exception as e:
             print(f"An error occurred during PDF generation via HTML: {e}")
 
-    elif not args.pdf and not args.moderncv: # Only generate HTML
+    elif not args.pdf and not args.moderncv and not args.ats: # Only generate HTML
         output_html_path = args.output or os.path.splitext(args.file_path)[0] + ".html"
         # 'content' is already the full HTML string from generate()
         with open(output_html_path, 'w', encoding='utf-8') as f:

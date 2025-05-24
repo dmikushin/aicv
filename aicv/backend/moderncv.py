@@ -164,7 +164,7 @@ def create_moderncv(processed_content, personal_info, bib_content=""):
 \\begin{{document}}
 \\maketitle
 
-{processed_content} % This will contain \section{{...}} \cventry{{...}} etc.
+{processed_content} % This will contain \\section{{...}} \\cventry{{...}} etc.
 
 % Print bibliography if there are publications
 {print_bibliography}
